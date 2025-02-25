@@ -1,4 +1,9 @@
--- REAPER Lua script to adjust MIDI note lengths based on a predetermined function
+-- @description Automatic TC spacing
+-- @author Albertsune
+-- @version 1.0
+-- @about
+--      Reaper script for Trombone Champ that automatically does the spacing for all notes in selected midi takes.
+--      Will skip slides, concur the ending note 
 
 
 
