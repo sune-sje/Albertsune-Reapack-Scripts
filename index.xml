@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="Albertsune Reapack Scripts" commit="12a66528355c401d4ff54768f8e57ba34dc3c035">
+<index version="1" name="Albertsune Reapack Scripts" commit="aacb44531ce228f91c4e00c772212847f1e9d372">
+  <category name="Autospacing">
+    <reapack name="AutoSpacing.lua" type="script" desc="Autospacing">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 Reaper script for Trombone Champ charters that automatically does the spacing for all notes in selected midi takes. Will skip slides, concur the ending note\par}
+}
+]]></description>
+        <link rel="website" href="https://github.com/jeremybernstein/ReaScripts/raw/main/index.xml">Needs sockmonkey72's midi util api, get his repo here:</link>
+      </metadata>
+      <version name="1.0" author="Albertsune" time="2025-02-25T16:40:19Z">
+        <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/aacb44531ce228f91c4e00c772212847f1e9d372/Autospacing/AutoSpacing.lua</source>
+      </version>
+    </reapack>
+  </category>
   <category name="TromboneChamp">
     <reapack name="AutoSpacing.lua" type="script" desc="Automatic TC spacing">
       <metadata>
