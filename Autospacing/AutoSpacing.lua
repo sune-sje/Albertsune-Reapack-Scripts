@@ -10,7 +10,7 @@
 --check for midiUtils
 package.path = reaper.GetResourcePath() .. '/Scripts/sockmonkey72 Scripts/MIDI/?.lua'
 local mu = require 'MIDIUtils'
-if not mu.CheckDependencies('My Script') then return end
+if not mu.CheckDependencies('AutoSpacing') then return end
 
 
 
