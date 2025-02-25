@@ -3,7 +3,9 @@
 -- @version 1.0
 -- @about
 --      Reaper script for Trombone Champ charters that automatically does the spacing for all notes in selected midi takes.
---      Will skip slides, concur the ending note 
+--      Will skip slides, concur the ending note
+-- @links 
+--      Needs sockmonkey72's midi util api, get his repo here: https://github.com/jeremybernstein/ReaScripts/raw/main/index.xml 
 
 
 
