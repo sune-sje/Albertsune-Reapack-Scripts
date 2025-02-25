@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="Albertsune Reapack Scripts" commit="cd907a84f3be38dcd0775d642765d87a640c4104">
+<index version="1" name="Albertsune Reapack Scripts" commit="b0ae1440f16fc6e83013953bce48dfedbdf16c5c">
+  <category name="Autospacing">
+    <reapack name="AutoSpacing.lua" type="script" desc="Automatic TC spacing">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 Reaper script for Trombone Champ that automatically does the spacing for all notes in selected midi takes. Will skip slides, concur the ending note\par}
+}
+]]></description>
+      </metadata>
+      <version name="1.0" author="Albertsune" time="2025-02-25T15:24:14Z">
+        <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/b0ae1440f16fc6e83013953bce48dfedbdf16c5c/Autospacing/AutoSpacing.lua</source>
+      </version>
+    </reapack>
+  </category>
   <category name="Example">
     <reapack name="cfillion_Hello world.lua" type="script" desc="Hello world">
       <metadata>
