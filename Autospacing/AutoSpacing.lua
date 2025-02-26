@@ -1,16 +1,21 @@
--- @description Autospacing
--- @author Albertsune
--- @version 1.0
--- @about
---      Reaper script for Trombone Champ charters that automatically does the spacing for all notes in selected midi takes.
---      Will skip slides, concur the ending note
--- @links 
---      Needs sockmonkey72's midi util api, get his repo here: https://github.com/jeremybernstein/ReaScripts/raw/main/index.xml 
+--[[
+@description Autospacing
+@about
+    Reaper script for Trombone Champ charters that automatically does the spacing for all notes in selected midi takes.
+    Will skip slides, concur the ending note
+@author Albertsune
+@version 1.1
+@changelog
+    Made self contained, no longer needs sockmonkey72's midi util api
+@provides
+    Autospacing/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
+    Autospacing.lua
+--]]
 
 
 
 --check for midiUtils
-package.path = reaper.GetResourcePath() .. '/Scripts/sockmonkey72 Scripts/MIDI/?.lua'
+package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/Autospacing/?.lua'
 local mu = require 'MIDIUtils'
 if not mu.CheckDependencies('AutoSpacing') then return end
 
