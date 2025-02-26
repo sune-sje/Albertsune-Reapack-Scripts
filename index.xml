@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="Albertsune Reapack Scripts" commit="aacb44531ce228f91c4e00c772212847f1e9d372">
+<index version="1" name="Albertsune Reapack Scripts" commit="9ff654ba9cd11ffc6b85449870608362613ba6be">
   <category name="Autospacing">
     <reapack name="AutoSpacing.lua" type="script" desc="Autospacing">
       <metadata>
@@ -17,22 +17,6 @@
       </version>
     </reapack>
   </category>
-  <category name="TromboneChamp">
-    <reapack name="AutoSpacing.lua" type="script" desc="AutoSpacing">
-      <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
-{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
-\widowctrl\hyphauto
-
-{\pard \ql \f0 \sa180 \li0 \fi0 Reaper script for Trombone Champ that automatically does the spacing for all notes in selected midi takes. Will skip slides, concur the ending note\par}
-}
-]]></description>
-      </metadata>
-      <version name="1.0" author="Albertsune" time="2025-02-25T15:24:14Z">
-        <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/b0ae1440f16fc6e83013953bce48dfedbdf16c5c/Autospacing/AutoSpacing.lua</source>
-      </version>
-    </reapack>
-  </category>
   <metadata>
     <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
@@ -40,8 +24,8 @@
 
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 Albertsune's Reapack Scripts\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Hi. This is where you find my reascripts. Most are probably meant to be used for Trombone Champ charting, if you don't know what that is ~~{\i why are you even here}~~ there's probably not much of interest here.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 You can import the repository in Reapack with this link: {\field{\*\fldinst{HYPERLINK "https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/refs/heads/master/index.xml"}}{\fldrslt{\ul
-https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/refs/heads/master/index.xml
+{\pard \ql \f0 \sa180 \li0 \fi0 You can import the repository in Reapack with this link: {\field{\*\fldinst{HYPERLINK "https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/master/index.xml"}}{\fldrslt{\ul
+https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/master/index.xml
 }}}
 \par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Scripts\par}
