@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <index version="1" name="Albertsune Reapack Scripts" commit="7dd79769c0621b9f00ef8d0f72a5e7d3fdcdf155">
-  <category name="Autospacing">
+  <category name="TromboneChamp">
     <reapack name="AutoSpacing.lua" type="script" desc="Autospacing">
       <metadata>
         <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
