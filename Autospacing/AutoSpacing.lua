@@ -9,13 +9,13 @@
     Made self contained, no longer needs sockmonkey72's midi util api
 @provides
     Autospacing/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
-    Autospacing.lua
+    [main=main] Autospacing.lua
 --]]
 
 
 
 --check for midiUtils
-package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/Autospacing/?.lua'
+package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/Autospacing/MIDIUtils.lua'
 local mu = require 'MIDIUtils'
 if not mu.CheckDependencies('AutoSpacing') then return end
 
