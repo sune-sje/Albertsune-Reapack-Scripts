@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="Albertsune Reapack Scripts" commit="9ff654ba9cd11ffc6b85449870608362613ba6be">
+<index version="1" name="Albertsune Reapack Scripts" commit="7dd79769c0621b9f00ef8d0f72a5e7d3fdcdf155">
   <category name="Autospacing">
     <reapack name="AutoSpacing.lua" type="script" desc="Autospacing">
       <metadata>
@@ -10,10 +10,14 @@
 {\pard \ql \f0 \sa180 \li0 \fi0 Reaper script for Trombone Champ charters that automatically does the spacing for all notes in selected midi takes. Will skip slides, concur the ending note\par}
 }
 ]]></description>
-        <link rel="website" href="https://github.com/jeremybernstein/ReaScripts/raw/main/index.xml">Needs sockmonkey72's midi util api, get his repo here:</link>
       </metadata>
       <version name="1.0" author="Albertsune" time="2025-02-25T16:40:19Z">
         <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/aacb44531ce228f91c4e00c772212847f1e9d372/Autospacing/AutoSpacing.lua</source>
+      </version>
+      <version name="1.1" author="Albertsune" time="2025-02-26T20:26:06Z">
+        <changelog><![CDATA[Made self contained, no longer needs sockmonkey72's midi util api]]></changelog>
+        <source file="Autospacing/MIDIUtils.lua">https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua</source>
+        <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/7dd79769c0621b9f00ef8d0f72a5e7d3fdcdf155/Autospacing/AutoSpacing.lua</source>
       </version>
     </reapack>
   </category>
