@@ -9,7 +9,7 @@
     Made self contained, no longer needs sockmonkey72's midi util api
 @provides
     Autospacing/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
-    [main=main] Autospacing.lua
+    [main=main] .
 --]]
 
 
