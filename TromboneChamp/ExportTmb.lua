@@ -10,7 +10,7 @@
 @provides
     dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
     MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
-    [main] tmbSettings.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/7dd79769c0621b9f00ef8d0f72a5e7d3fdcdf155/Lib/tmbSettings.lua
+    [main] tmbSettings.lua
     [main] ExportTmb.lua
 --]]
 
