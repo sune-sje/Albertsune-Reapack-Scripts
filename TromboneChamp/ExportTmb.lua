@@ -8,25 +8,33 @@
 @changelog
     Initial release
 @provides
-    dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
-    MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
-    [main] tmbSettings.lua
+    ExportTmb/dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
+    ExportTmb/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
+    [main] ExportTmb/tmbSettings.lua
     [main] ExportTmb.lua
 --]]
 
 
+--check if script is module or main file, only exports if main
+if pcall(debug.getlocal, 4, 1) then
+    package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/MIDIUtils.lua'
+    mu = require 'MIDIUtils'
+    if not mu.CheckDependencies('ExportTmb') then return end
+    json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/dkjson.lua")
+else
+    package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/ExportTmb/MIDIUtils.lua'
+    mu = require 'MIDIUtils'
+    if not mu.CheckDependencies('ExportTmb') then return end
+    json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/ExportTmb/dkjson.lua")
+end
 
---check for midiUtils
-package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/MIDIUtils.lua'
-local mu = require 'MIDIUtils'
-if not mu.CheckDependencies('ExportTmb') then return end
 
 --import imgui (used for one single function lmaoo)
 package.path = reaper.ImGui_GetBuiltinPath() .. '/?.lua'
 local imgui = require 'imgui' '0.9.3'
 
 --import dkjson for exporting. I use dofile here instead because why tf not. Variation is good LMAO
-local json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/dkjson.lua")
+
 local exportTmb = {}
 local bend_range = reaper.GetProjExtState(0, "TmbSettings", "bend_range")
 

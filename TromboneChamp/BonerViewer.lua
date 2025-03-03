@@ -8,10 +8,10 @@
     Initial release
 @provides
     [main] BonerViewer.lua
-    ExportTmb.lua
-    tmbSettings.lua
-    MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
-    dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
+    BonerViewer/ExportTmb.lua
+    BonerViewer/tmbSettings.lua
+    BonerViewer/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
+    BonerViewer/dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
 
 --]]
 

@@ -1,8 +1,11 @@
---@noindex
+-- @noindex
 package.path = reaper.ImGui_GetBuiltinPath() .. '/?.lua'
 local imgui = require 'imgui' '0.9.3'
 
-local json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/dkjson.lua")
+
+--local script_path = debug.getinfo(1, "S").source:match("@?(.*[/\\])")
+local json = dofile(debug.getinfo(1, "S").source:match("@?(.*[/\\])") .. "dkjson.lua")
+--local json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/dkjson.lua")
 
 
 
