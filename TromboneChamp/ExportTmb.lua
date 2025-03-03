@@ -1,32 +1,10 @@
---[[
-@description ExportTmb
-@about
-    Exports a tmb file generated as if you had exported midi and ran it through the tccc converter.
-    Tmb settings are stored in the project itself and can be edited with the tmbSettings script.
-@author Albertsune
-@version 1.0
-@changelog
-    Initial release
-@provides
-    ExportTmb/dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
-    ExportTmb/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
-    [main] ExportTmb/tmbSettings.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/aacb44531ce228f91c4e00c772212847f1e9d372/TromboneChamp/tmbSettings.lua
-    [main] ExportTmb.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/aacb44531ce228f91c4e00c772212847f1e9d372/TromboneChamp/ExportTmb.lua
---]]
+-- @noindex
 
 
---check if script is module or main file, only exports if main
-if pcall(debug.getlocal, 4, 1) then
-    package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/MIDIUtils.lua'
-    mu = require 'MIDIUtils'
-    if not mu.CheckDependencies('ExportTmb') then return end
-    json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/dkjson.lua")
-else
-    package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/ExportTmb/MIDIUtils.lua'
-    mu = require 'MIDIUtils'
-    if not mu.CheckDependencies('ExportTmb') then return end
-    json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/ExportTmb/dkjson.lua")
-end
+package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/MIDIUtils.lua'
+local mu = require 'MIDIUtils'
+if not mu.CheckDependencies('ExportTmb') then return end
+local json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/dkjson.lua")
 
 
 --import imgui (used for one single function lmaoo)

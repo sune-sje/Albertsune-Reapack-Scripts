@@ -8,8 +8,8 @@
     Initial release
 @provides
     [main] BonerViewer.lua
-    BonerViewer/ExportTmb.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/aacb44531ce228f91c4e00c772212847f1e9d372/TromboneChamp/ExportTmb.lua
-    BonerViewer/tmbSettings.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/aacb44531ce228f91c4e00c772212847f1e9d372/TromboneChamp/tmbSettings.lua
+    [main] ExportTmb.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/aacb44531ce228f91c4e00c772212847f1e9d372/TromboneChamp/ExportTmb.lua
+    [main] tmbSettings.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/aacb44531ce228f91c4e00c772212847f1e9d372/TromboneChamp/tmbSettings.lua
     BonerViewer/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
     BonerViewer/dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
 
