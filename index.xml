@@ -29,9 +29,9 @@
       </metadata>
       <version name="1.0" author="Albertsune" time="2025-03-03T23:05:16Z">
         <changelog><![CDATA[Initial release]]></changelog>
-        <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/e72f9e5ab2678329969a965f77fe21cef056fe51/TromboneChamp/BonerViewer.lua</source>
-        <source file="BonerViewer/ExportTmb.lua">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/e72f9e5ab2678329969a965f77fe21cef056fe51/TromboneChamp/ExportTmb.lua</source>
-        <source file="BonerViewer/tmbSettings.lua">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/e72f9e5ab2678329969a965f77fe21cef056fe51/TromboneChamp/tmbSettings.lua</source>
+        <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/ed6e6858a9fafb08dd038fe3a55e2002fc726761/TromboneChamp/BonerViewer.lua</source>
+        <source file="BonerViewer/ExportTmb.lua">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/ed6e6858a9fafb08dd038fe3a55e2002fc726761/TromboneChamp/ExportTmb.lua</source>
+        <source file="BonerViewer/tmbSettings.lua">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/ed6e6858a9fafb08dd038fe3a55e2002fc726761/TromboneChamp/tmbSettings.lua</source>
         <source file="BonerViewer/MIDIUtils.lua">https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua</source>
         <source file="BonerViewer/dkjson.lua">https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua</source>
       </version>
