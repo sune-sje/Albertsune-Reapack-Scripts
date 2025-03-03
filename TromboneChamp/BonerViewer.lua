@@ -8,10 +8,10 @@
     Initial release
 @provides
     [main] BonerViewer.lua
-    [main] exportTmb.lua
-    [main] tmbSettings.lua
+    [main] ExportTmb.lua
+    [main] tmbSettings.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/7dd79769c0621b9f00ef8d0f72a5e7d3fdcdf155/Lib/tmbSettings.lua
     MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
-    dkjson.lua
+    dkjson.lua https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/7dd79769c0621b9f00ef8d0f72a5e7d3fdcdf155/Lib/dkjson.lua
 
 --]]
 
