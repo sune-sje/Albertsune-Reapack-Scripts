@@ -14,9 +14,10 @@ local imgui = require 'imgui' '0.9.3'
 --import dkjson for exporting. I use dofile here instead because why tf not. Variation is good LMAO
 
 local exportTmb = {}
-local bend_range = reaper.GetProjExtState(0, "TmbSettings", "bend_range")
+local _, bend_range = reaper.GetProjExtState(0, "TmbSettings", "bendrange")
 
 if not bend_range then bend_range = 2 end
+bend_range = tonumber(bend_range)
 
 reaper.ClearConsole()
 
@@ -93,14 +94,26 @@ local function process_midi_notes(take)
         local midiIdx = 0
         local loop_offset = loopNum * source_length
 
+
+        local skipped = 0
+
         --second loop loops through the midi take itself and formats all notes as in tmb
         while true do
+            ::continue::
             -- get information on current note
             local retval, selected, muted, start_ppqpos, end_ppqpos, chan, pitch, vel = mu.MIDI_GetNote(take, midiIdx)
             if not retval then break end
+            
+
+            
+            if reaper.MIDI_GetProjTimeFromPPQPos(take, start_ppqpos) < item_start then
+                midiIdx = midiIdx + 1
+                skipped = skipped + 1
+                goto continue
+            end
 
             currentPos = start_ppqpos + loop_offset
-            if reaper.MIDI_GetProjTimeFromPPQPos(take, currentPos) >= item_start + item_length then
+            if reaper.MIDI_GetProjTimeFromPPQPos(take, currentPos) >= item_start + item_length-0.001 then
                 break
             end
 
@@ -116,17 +129,21 @@ local function process_midi_notes(take)
             --update pitch to include pitch shifts and convert all to tmb format
             local start_pitch_shift = get_pitch_shift(take, chan, start_pos)
             local end_pitch_shift = get_pitch_shift(take, chan, end_pos)
-            local start_pitch = convert_pitch((pitch + (start_pitch_shift - 8192) / (4096 / bend_range)))
-            local end_pitch = convert_pitch((pitch + (end_pitch_shift - 8192) / (4096 / bend_range)))
+            local start_pitch = convert_pitch((pitch + (start_pitch_shift - 8192) / (8192 / bend_range)))
+            local end_pitch = convert_pitch((pitch + (end_pitch_shift - 8192) / (8192 / bend_range)))
             local start_pos = start_pos * (bpm / 60)
             local end_pos = end_pos * (bpm / 60)
 
+            --[[if start_pos == end_pos then
+                midiIdx = midiIdx + 1
+                goto continue
+            end--]]
 
 
             --oh boy, here come the slides
 
             --always add first note
-            if midiIdx == 0 then
+            if midiIdx == skipped then
                 notes[tmbIdx] = {
                     x_start = start_pos,
                     length = end_pos - start_pos,
@@ -143,7 +160,7 @@ local function process_midi_notes(take)
                     notes[tmbIdx - 1].y_end = start_pitch
                     notes[tmbIdx - 1].length = end_pos - notes[tmbIdx - 1].x_start
                     notes[tmbIdx - 1].x_end = end_pos
-                    --default, add note to tmb
+                --default, add note to tmb
                 else
                     notes[tmbIdx] = {
                         x_start = start_pos,
@@ -153,7 +170,6 @@ local function process_midi_notes(take)
                         delta_pitch = end_pitch - start_pitch,
                         y_end = end_pitch
                     }
-                    notes[tmbIdx].x_end = math.min(notes[tmbIdx].x_end, end_pos)
                     tmbIdx = tmbIdx + 1
                 end
             end
@@ -205,7 +221,11 @@ local function get_notes()
         local take_notes = process_midi_notes(takeList[i])
         if not take_notes then goto skip end
         for j = 1, #take_notes do
-            table.insert(notes, take_notes[j])
+            if take_notes[j].length > 0.0005 then
+                table.insert(notes, take_notes[j])
+                --reaper.ShowConsoleMsg("Zero length note found, skipping\n")
+            end
+            
         end
         ::skip::
     end
