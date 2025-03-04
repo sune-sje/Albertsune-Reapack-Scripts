@@ -133,6 +133,7 @@ local function loop()
     
     _, settings.endpoint = imgui.InputText(ctx, "Endpoint (*)", settings.endpoint, imgui.InputTextFlags_CharsDecimal)
 
+    _, settings.trackRef = imgui.InputText(ctx, "Track Ref", settings.trackRef)
     
     
     imgui.SeparatorText(ctx, "Export settings")

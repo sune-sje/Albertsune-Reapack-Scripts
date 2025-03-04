@@ -218,8 +218,8 @@ local function get_tmb_inputs()
         savednotespacing = 280,
         endpoint = nil,
         trackRef = "",
-        note_color_start = -51712,
-        note_color_end = -13236,
+        note_color_start = {1,0.21176471,0},
+        note_color_end = {1,0.8,0.29803922},
         bendrange = 2,
         exportpath = reaper.GetProjectPath() .. "\\song.tmb"
 
