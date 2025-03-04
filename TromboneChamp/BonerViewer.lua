@@ -3,11 +3,9 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.1.5
+@version 1.1.6
 @changelog
-    Now uses tmb colors in preview
-    ExportTmb button won't open settings window multiple times, closes if already open
-    Can handle empty midi items
+    eh who knows
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua
