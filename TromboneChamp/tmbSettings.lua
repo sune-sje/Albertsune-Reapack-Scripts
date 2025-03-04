@@ -15,8 +15,8 @@ local EXT_STATE_SECTION = "TmbSettings"
 local settings = {
     file_path = "",
     folder_path = "",
-    note_color_start = imgui.ColorConvertDouble4ToU32(1, 1, 54/255, 0),
-    note_color_end = imgui.ColorConvertDouble4ToU32(1, 1, 204/255, 76/255),
+    note_color_start = imgui.ColorConvertDouble4ToU32(1.0, 1.0, 0.0, 0.0),
+    note_color_end = imgui.ColorConvertDouble4ToU32(1.0, 0.0, 0.0, 1.0),
     checkbox = false,
     bendrange = 2,
     name = "",
@@ -96,6 +96,12 @@ local function loop()
         imgui.End(ctx)
         return
     end
+
+    if select(2, reaper.GetProjExtState(0, "TmbSettings", "isSetting")) == "false" then
+        imgui.End(ctx)
+        return
+    end
+
     
     
     
@@ -133,6 +139,7 @@ local function loop()
     
     _, settings.endpoint = imgui.InputText(ctx, "Endpoint (*)", settings.endpoint, imgui.InputTextFlags_CharsDecimal)
 
+    _, settings.trackRef = imgui.InputText(ctx, "Track Ref", settings.trackRef)
     
     
     imgui.SeparatorText(ctx, "Export settings")
@@ -168,6 +175,7 @@ local function loop()
 
     if imgui.Button(ctx, "Save") then
         saveSettings()
+        reaper.SetProjExtState(0, "TmbSettings", "isSetting", "false")
         imgui.End(ctx)
         return
     end

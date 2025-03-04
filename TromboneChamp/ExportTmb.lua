@@ -32,7 +32,6 @@ end
 local function get_pitch_shift(take, chan, time)
     local retval, pitch_shift = mu.MIDI_GetCCValueAtTime(take, 0xE0, 0, _, time)
     if retval then
-        reaper.ShowConsoleMsg(pitch_shift)
         return pitch_shift
     else
         return 8192
@@ -63,6 +62,10 @@ local function process_midi_notes(take)
     --initialize take in midiutils
     mu.MIDI_InitializeTake(take)
     mu.MIDI_OpenWriteTransaction(take)
+
+    if select(2, mu.MIDI_CountEvts(take)) == 0 then
+        return
+    end
     
     --since reaper can't differentiate channels for pitch shifts, we merge them all into channel one
     merge_pitch_shifts(take)
@@ -188,9 +191,11 @@ local function get_notes()
 
     for i = 1, #takeList do
         local take_notes = process_midi_notes(takeList[i])
+        if not take_notes then goto skip end
         for j = 1, #take_notes do
             table.insert(notes, take_notes[j])
         end
+        ::skip::
     end
 
     table.sort(notes, function(a, b)
@@ -218,8 +223,8 @@ local function get_tmb_inputs()
         savednotespacing = 280,
         endpoint = nil,
         trackRef = "",
-        note_color_start = -51712,
-        note_color_end = -13236,
+        note_color_start = {1,0.21176471,0},
+        note_color_end = {1,0.8,0.29803922},
         bendrange = 2,
         exportpath = reaper.GetProjectPath() .. "\\song.tmb"
 
@@ -265,6 +270,7 @@ local function saveTmb(notes, filename)
     local exportpath = data.exportpath
     data.exportpath = nil
     data.bendrange = nil
+    data.isSetting = nil
     local file = io.open(exportpath, "w")
     local json_string = json.encode(data,
         { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "notes" } })
@@ -289,7 +295,6 @@ end
 
 --public functions, if used as module
 function exportTmb.getNotes(bwa)
-    reaper.ShowConsoleMsg("teehee no workyy")
     return get_notes
 end
 
@@ -299,9 +304,7 @@ end
 
 --check if script is module or main file, only exports if main
 if pcall(debug.getlocal, 4, 1) then
-    reaper.ShowMessageBox("Running as module", "sdiujghsdg", 0)
     return exportTmb
 else
-    reaper.ShowConsoleMsg("Running as the main script")
     main()
 end
