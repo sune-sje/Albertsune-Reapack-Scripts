@@ -19,7 +19,7 @@
 
 package.path = reaper.ImGui_GetBuiltinPath() .. '/?.lua'
 local imgui = require 'imgui' '0.9.3'
-local tmb = dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/exportTmb.lua')
+local tmb = dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/exportTmb.lua')
 
 
 
@@ -230,7 +230,7 @@ local function main()
         end
         imgui.SameLine(ctx)
         if imgui.Button(ctx, "Edit tmb values") then
-            dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/tmbSettings.lua')
+            dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/tmbSettings.lua')
         end
         imgui.SameLine(ctx)
         if imgui.Button(ctx, "Export Tmb") then
