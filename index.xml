@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="Albertsune Reapack Scripts" commit="d7316bf63245626744eb4efbb6e712e7345bd8d2">
+<index version="1" name="Albertsune Reapack Scripts" commit="1618f53b2784c1fceab3a4af02a0ba99a38f1ac3">
   <category name="TromboneChamp">
     <reapack name="AutoSpacing.lua" type="script" desc="Autospacing">
       <metadata>
@@ -85,6 +85,14 @@ Can handle empty midi items]]></changelog>
         <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/d7316bf63245626744eb4efbb6e712e7345bd8d2/TromboneChamp/BonerViewer.lua</source>
         <source main="main" file="ExportTmb.lua">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/d7316bf63245626744eb4efbb6e712e7345bd8d2/TromboneChamp/ExportTmb.lua</source>
         <source main="main" file="tmbSettings.lua">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/d7316bf63245626744eb4efbb6e712e7345bd8d2/TromboneChamp/tmbSettings.lua</source>
+        <source file="BonerViewer/MIDIUtils.lua">https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua</source>
+        <source file="BonerViewer/dkjson.lua">https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua</source>
+      </version>
+      <version name="1.1.6" author="Albertsune" time="2025-03-04T15:05:25Z">
+        <changelog><![CDATA[eh who knows]]></changelog>
+        <source main="main">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/52b093b638ab1f254e2e5dc9280be00cec3a6153/TromboneChamp/BonerViewer.lua</source>
+        <source main="main" file="ExportTmb.lua">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/52b093b638ab1f254e2e5dc9280be00cec3a6153/TromboneChamp/ExportTmb.lua</source>
+        <source main="main" file="tmbSettings.lua">https://github.com/sune-sje/Albertsune-Reapack-Scripts/raw/52b093b638ab1f254e2e5dc9280be00cec3a6153/TromboneChamp/tmbSettings.lua</source>
         <source file="BonerViewer/MIDIUtils.lua">https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua</source>
         <source file="BonerViewer/dkjson.lua">https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua</source>
       </version>
