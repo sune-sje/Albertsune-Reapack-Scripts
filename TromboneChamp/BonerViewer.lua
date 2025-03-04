@@ -3,7 +3,7 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.1.2
+@version 1.1.3
 @changelog
     Initial release
 @provides
@@ -94,15 +94,20 @@ local function get_tcp_width()
 
     if arrange_view_hwnd then
         -- Get Arrange View position
-        local left, top, right, bottom = reaper.JS_Window_GetRect(arrange_view_hwnd)
+        local _, left, top, right, bottom = reaper.JS_Window_GetRect(arrange_view_hwnd)
+
+        reaper.ShowConsoleMsg("left: " .. left .. "\n")
+        reaper.ShowConsoleMsg("right: " .. right .. "\n")
+        reaper.ShowConsoleMsg("top: " .. top .. "\n")
+        reaper.ShowConsoleMsg("bottom: " .. bottom .. "\n")
 
 
-        return top
+        return left
     else
         reaper.ShowConsoleMsg("Could not find Arrange View window.\n")
     end
 
-    return top
+    return left
 end
 
 
