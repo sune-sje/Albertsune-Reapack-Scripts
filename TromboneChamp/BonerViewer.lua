@@ -1,17 +1,15 @@
---[[ 
+--[[
 @description BonerViewer
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.1.5
+@version 1.1.6
 @changelog
-    Now uses tmb colors in preview
-    ExportTmb button won't open settings window multiple times, closes if already open
-    Can handle empty midi items
+    eh who knows
 @provides
     [main] BonerViewer.lua
-    [main=main] ExportTmb.lua 
-    [main=main] tmbSettings.lua 
+    [main=main] ExportTmb.lua
+    [main=main] tmbSettings.lua
     BonerViewer/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
     BonerViewer/dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
 
@@ -45,7 +43,7 @@ end
 
 -- Create imgui context
 local ctx = imgui.CreateContext('BonerViewer')
-reaper.Main_OnCommand(41598,0) -- move dock to bottom
+reaper.Main_OnCommand(41598, 0) -- move dock to bottom
 
 
 -- Utility function to interpolate between two colors
@@ -77,13 +75,12 @@ local function get_tcp_width()
     local arrange_view_hwnd = reaper.JS_Window_FindChildByID(main_hwnd, 1000)
 
     if arrange_view_hwnd then
-        
         -- Get Main and Arrange View positions
         local _, mainLeft, mainTop, mainRight, mainBottom = reaper.JS_Window_GetRect(main_hwnd)
         local _, left, top, right, bottom = reaper.JS_Window_GetRect(arrange_view_hwnd)
 
 
-        return left-mainLeft
+        return left - mainLeft
     else
         reaper.ShowConsoleMsg("Could not find Arrange View window.\n")
     end
@@ -100,14 +97,15 @@ local function main()
     --get arrange view size and zoom level, don't mind the magic numbers
     local horizontal_zoom = reaper.GetHZoomLevel()
     local arrange_start, arrange_end = reaper.GetSet_ArrangeView2(0, false, 0, 0)
-    local horizontal_scale = horizontal_zoom /(reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0))) / 1.2)
+    local horizontal_scale = horizontal_zoom /
+    (reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0))) / 1.2)
     local tcp_width = get_tcp_width()
 
 
     --create window
     imgui.SetNextWindowSize(ctx, 400, 300, imgui.Cond_FirstUseEver)
     imgui.SetNextWindowDockID(ctx, -1, imgui.Cond_FirstUseEver)
-    local visible, open = imgui.Begin(ctx, 'BonerViewer', true, imgui.WindowFlags_NoSavedSettings)--imgui.WindowFlags_NoMove)--imgui.WindowFlags_NoSavedSettings) -- imgui.WindowFlags_TopMost)
+    local visible, open = imgui.Begin(ctx, 'BonerViewer', true, imgui.WindowFlags_NoSavedSettings) --imgui.WindowFlags_NoMove)--imgui.WindowFlags_NoSavedSettings) -- imgui.WindowFlags_TopMost)
     if not visible then return end
     if not open then
         imgui.End(ctx)
@@ -121,7 +119,7 @@ local function main()
     imgui.BeginChild(ctx, 'ScrollableRegion', region_avail_x, region_avail_y, 1, imgui.WindowFlags_NoMouseInputs) -- imgui.WindowFlags_HorizontalScrollbar)--+imgui.WindowFlags_TopMost)-- + imgui.WindowFlags_NoFocusOnAppearing + imgui.WindowFlags_NoBackground)-- + imgui.WindowFlags_NoMouseInputs)
 
     -- Get the horizontal scroll offset
-    local scroll_x = (arrange_start * horizontal_zoom) - tcp_width+15
+    local scroll_x = (arrange_start * horizontal_zoom) - tcp_width + 15
 
 
 
@@ -143,17 +141,17 @@ local function main()
     local draw_list = imgui.GetWindowDrawList(ctx)
     local retval, color_start = reaper.GetProjExtState(0, "TmbSettings", "note_color_start")
     if retval and tonumber(color_start) then
-        color_start = {imgui.ColorConvertU32ToDouble4(tonumber(color_start))}
-        color_start = imgui.ColorConvertDouble4ToU32(color_start[2],color_start[3],color_start[4], color_start[1])
+        color_start = { imgui.ColorConvertU32ToDouble4(tonumber(color_start)) }
+        color_start = imgui.ColorConvertDouble4ToU32(color_start[2], color_start[3], color_start[4], color_start[1])
     else
-        color_start = imgui.ColorConvertDouble4ToU32(1.0, 0.0, 0.0, 1.0)   -- Red
+        color_start = imgui.ColorConvertDouble4ToU32(1.0, 0.0, 0.0, 1.0) -- Red
     end
     local retval, color_end = reaper.GetProjExtState(0, "TmbSettings", "note_color_end")
     if retval and tonumber(color_end) then
-        color_end = {imgui.ColorConvertU32ToDouble4(tonumber(color_end))}
-        color_end = imgui.ColorConvertDouble4ToU32(color_end[2],color_end[3],color_end[4], color_end[1])
+        color_end = { imgui.ColorConvertU32ToDouble4(tonumber(color_end)) }
+        color_end = imgui.ColorConvertDouble4ToU32(color_end[2], color_end[3], color_end[4], color_end[1])
     else
-        color_end = imgui.ColorConvertDouble4ToU32(0.0, 0.0, 1.0, 1.0)     -- Blue
+        color_end = imgui.ColorConvertDouble4ToU32(0.0, 0.0, 1.0, 1.0)       -- Blue
     end
     local outline_color = imgui.ColorConvertDouble4ToU32(0.0, 0.0, 0.0, 1.0) -- Black
     local line_thickness = 7
@@ -222,7 +220,7 @@ local function main()
     local pixels_per_beat = 5 * bpm / 6 * (4 / timesig_denom)
     local play_cursor_x = window_pos_x + play_position * pixels_per_beat * horizontal_scale - scroll_x
     imgui.DrawList_AddLine(draw_list, play_cursor_x, window_pos_y, play_cursor_x, window_pos_y + region_avail_y,
-        imgui.ColorConvertDouble4ToU32(0.0, 0.0, 0.0, 1.0), 5.0)                                                                                                          -- Green vertical line
+        imgui.ColorConvertDouble4ToU32(0.0, 0.0, 0.0, 1.0), 5.0) -- Green vertical line
 
     imgui.EndChild(ctx)
 
@@ -254,8 +252,6 @@ local function main()
 
 
     reaper.defer(main)
-
-
 end
 
 main()
