@@ -63,6 +63,10 @@ local function process_midi_notes(take)
     --initialize take in midiutils
     mu.MIDI_InitializeTake(take)
     mu.MIDI_OpenWriteTransaction(take)
+
+    if select(2, mu.MIDI_CountEvts(take)) == 0 then
+        return
+    end
     
     --since reaper can't differentiate channels for pitch shifts, we merge them all into channel one
     merge_pitch_shifts(take)
@@ -188,9 +192,11 @@ local function get_notes()
 
     for i = 1, #takeList do
         local take_notes = process_midi_notes(takeList[i])
+        if not take_notes then goto skip end
         for j = 1, #take_notes do
             table.insert(notes, take_notes[j])
         end
+        ::skip::
     end
 
     table.sort(notes, function(a, b)
@@ -265,6 +271,7 @@ local function saveTmb(notes, filename)
     local exportpath = data.exportpath
     data.exportpath = nil
     data.bendrange = nil
+    data.isSetting = nil
     local file = io.open(exportpath, "w")
     local json_string = json.encode(data,
         { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "notes" } })

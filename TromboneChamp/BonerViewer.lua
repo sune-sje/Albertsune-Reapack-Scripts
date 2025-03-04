@@ -3,12 +3,11 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.1.4
+@version 1.1.5
 @changelog
-    Fixed allignment issues with the preview window
-    Added trackref option to export
-    Fixed window initialization
-    cleaned up code
+    Now uses tmb colors in preview
+    ExportTmb button won't open settings window multiple times, closes if already open
+    Can handle empty midi items
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua 
@@ -142,8 +141,20 @@ local function main()
 
     -- Draw the lines with gradient colors, customizable outlines, and rounded edges
     local draw_list = imgui.GetWindowDrawList(ctx)
-    local color_start = imgui.ColorConvertDouble4ToU32(1.0, 0.0, 0.0, 1.0)   -- Red
-    local color_end = imgui.ColorConvertDouble4ToU32(0.0, 0.0, 1.0, 1.0)     -- Blue
+    local retval, color_start = reaper.GetProjExtState(0, "TmbSettings", "note_color_start")
+    if retval and tonumber(color_start) then
+        color_start = {imgui.ColorConvertU32ToDouble4(tonumber(color_start))}
+        color_start = imgui.ColorConvertDouble4ToU32(color_start[2],color_start[3],color_start[4], color_start[1])
+    else
+        color_start = imgui.ColorConvertDouble4ToU32(1.0, 0.0, 0.0, 1.0)   -- Red
+    end
+    local retval, color_end = reaper.GetProjExtState(0, "TmbSettings", "note_color_end")
+    if retval and tonumber(color_end) then
+        color_end = {imgui.ColorConvertU32ToDouble4(tonumber(color_end))}
+        color_end = imgui.ColorConvertDouble4ToU32(color_end[2],color_end[3],color_end[4], color_end[1])
+    else
+        color_end = imgui.ColorConvertDouble4ToU32(0.0, 0.0, 1.0, 1.0)     -- Blue
+    end
     local outline_color = imgui.ColorConvertDouble4ToU32(0.0, 0.0, 0.0, 1.0) -- Black
     local line_thickness = 7
     local outline_thickness = 11
@@ -221,10 +232,17 @@ local function main()
     if imgui.Button(ctx, "Reload Preview") then
         lines = getNotes()
     end
+
     imgui.SameLine(ctx)
     if imgui.Button(ctx, "Edit tmb values") then
-        dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/tmbSettings.lua')
+        if select(2, reaper.GetProjExtState(0, "TmbSettings", "isSetting")) ~= "true" then
+            reaper.SetProjExtState(0, "TmbSettings", "isSetting", "true")
+            dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/tmbSettings.lua')
+        else
+            reaper.SetProjExtState(0, "TmbSettings", "isSetting", "false")
+        end
     end
+
     imgui.SameLine(ctx)
     if imgui.Button(ctx, "Export Tmb") then
         tmb.export()
