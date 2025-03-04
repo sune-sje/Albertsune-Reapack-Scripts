@@ -32,7 +32,6 @@ end
 local function get_pitch_shift(take, chan, time)
     local retval, pitch_shift = mu.MIDI_GetCCValueAtTime(take, 0xE0, 0, _, time)
     if retval then
-        reaper.ShowConsoleMsg(pitch_shift)
         return pitch_shift
     else
         return 8192
