@@ -3,7 +3,7 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.0
+@version 1.1
 @changelog
     Initial release
 @provides
@@ -230,7 +230,7 @@ local function main()
         end
         imgui.SameLine(ctx)
         if imgui.Button(ctx, "Edit tmb values") then
-            dofile(reaper.GetResourcePath() .. '/Scripts/tmbSettings.lua')
+            dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/tmbSettings.lua')
         end
         imgui.SameLine(ctx)
         if imgui.Button(ctx, "Export Tmb") then
