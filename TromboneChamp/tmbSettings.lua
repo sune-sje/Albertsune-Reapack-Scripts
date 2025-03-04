@@ -88,6 +88,7 @@ end
 local function loop()
     -- Open window
     imgui.SetNextWindowSize(ctx, 452, 678, imgui.Cond_FirstUseEver)
+    imgui.SetNextWindowPos(ctx, 50, 50, imgui.Cond_FirstUseEver)
     visible, open = imgui.Begin(ctx, "Edit TMB Values", true,
         imgui.WindowFlags_NoCollapse + imgui.WindowFlags_NoResize + imgui.WindowFlags_NoSavedSettings) -- + imgui.WindowFlags_NoResize)
 
