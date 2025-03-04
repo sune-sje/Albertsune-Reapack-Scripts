@@ -289,7 +289,6 @@ end
 
 --public functions, if used as module
 function exportTmb.getNotes(bwa)
-    reaper.ShowConsoleMsg("teehee no workyy")
     return get_notes
 end
 
@@ -299,9 +298,7 @@ end
 
 --check if script is module or main file, only exports if main
 if pcall(debug.getlocal, 4, 1) then
-    --reaper.ShowMessageBox("Running as module", "sdiujghsdg", 0)
     return exportTmb
 else
-    --reaper.ShowConsoleMsg("Running as the main script")
     main()
 end
