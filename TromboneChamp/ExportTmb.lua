@@ -299,9 +299,9 @@ end
 
 --check if script is module or main file, only exports if main
 if pcall(debug.getlocal, 4, 1) then
-    reaper.ShowMessageBox("Running as module", "sdiujghsdg", 0)
+    --reaper.ShowMessageBox("Running as module", "sdiujghsdg", 0)
     return exportTmb
 else
-    reaper.ShowConsoleMsg("Running as the main script")
+    --reaper.ShowConsoleMsg("Running as the main script")
     main()
 end
