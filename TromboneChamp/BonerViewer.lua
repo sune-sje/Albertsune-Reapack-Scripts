@@ -3,10 +3,9 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.1.7
+@version 1.1.8
 @changelog
-    Fixed pitch bend
-    Removed ghost notes
+    Fixed pitch bends (again)
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua

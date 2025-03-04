@@ -16,7 +16,7 @@ local imgui = require 'imgui' '0.9.3'
 local exportTmb = {}
 local _, bend_range = reaper.GetProjExtState(0, "TmbSettings", "bendrange")
 
-if not bend_range then bend_range = 2 end
+if not tonumber(bend_range) then bend_range = 2 end
 bend_range = tonumber(bend_range)
 
 reaper.ClearConsole()
