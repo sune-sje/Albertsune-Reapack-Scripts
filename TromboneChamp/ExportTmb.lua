@@ -41,16 +41,16 @@ end
 
 --merges all pitch shifts into channel 0
 local function merge_pitch_shifts(take)
-    local _, _, evtCount  = reaper.MIDI_CountEvts(take)
-    for i=0, evtCount-1 do
+    local _, _, evtCount = reaper.MIDI_CountEvts(take)
+    for i = 0, evtCount - 1 do
         local _, _, _, _, msg = mu.MIDI_GetCC(take, i)
         if msg == "0xE0" then
             mu.MIDI_SetCC(take, i, _, _, _, _, 0)
         end
     end
 end
-    
-    
+
+
 
 
 --loops through a take and returns a list of notes in tmb format
@@ -66,7 +66,7 @@ local function process_midi_notes(take)
     if select(2, mu.MIDI_CountEvts(take)) == 0 then
         return
     end
-    
+
     --since reaper can't differentiate channels for pitch shifts, we merge them all into channel one
     merge_pitch_shifts(take)
 
@@ -127,8 +127,14 @@ local function process_midi_notes(take)
 
             --always add first note
             if midiIdx == 0 then
-                notes[tmbIdx] = { x_start = start_pos, length = end_pos - start_pos, x_end = end_pos, y_start =
-                start_pitch, delta_pitch = end_pitch - start_pitch, y_end = end_pitch }
+                notes[tmbIdx] = {
+                    x_start = start_pos,
+                    length = end_pos - start_pos,
+                    x_end = end_pos,
+                    y_start = start_pitch,
+                    delta_pitch = end_pitch - start_pitch,
+                    y_end = end_pitch
+                }
                 tmbIdx = tmbIdx + 1
             else
                 --if previous note overlaps and isn't same pitch, set end pos/pitch of prev note to create slide
@@ -139,8 +145,14 @@ local function process_midi_notes(take)
                     notes[tmbIdx - 1].x_end = end_pos
                     --default, add note to tmb
                 else
-                    notes[tmbIdx] = { x_start = start_pos, length = end_pos - start_pos, x_end = end_pos, y_start =
-                    start_pitch, delta_pitch = end_pitch - start_pitch, y_end = end_pitch }
+                    notes[tmbIdx] = {
+                        x_start = start_pos,
+                        length = end_pos - start_pos,
+                        x_end = end_pos,
+                        y_start = start_pitch,
+                        delta_pitch = end_pitch - start_pitch,
+                        y_end = end_pitch
+                    }
                     notes[tmbIdx].x_end = math.min(notes[tmbIdx].x_end, end_pos)
                     tmbIdx = tmbIdx + 1
                 end
@@ -223,8 +235,8 @@ local function get_tmb_inputs()
         savednotespacing = 280,
         endpoint = nil,
         trackRef = "",
-        note_color_start = {1,0.21176471,0},
-        note_color_end = {1,0.8,0.29803922},
+        note_color_start = { 1, 0.21176471, 0 },
+        note_color_end = { 1, 0.8, 0.29803922 },
         bendrange = 2,
         exportpath = reaper.GetProjectPath() .. "\\song.tmb"
 
