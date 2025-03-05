@@ -22,6 +22,7 @@ bend_range = tonumber(bend_range)
 reaper.ClearConsole()
 
 
+
 --converts pitch from midi to tmb format, clamps out of bound notes
 local function convert_pitch(pitch)
     pitch = math.min(math.max(pitch, 47), 73)
@@ -211,6 +212,54 @@ end
 
 
 
+--combines lyrics of all tracks of unmuted takes in a single sorted list
+local function get_lyrics()
+    local takeList = get_unmuted_takes()
+    local lyrics = {}
+    local lyricIdx = 1
+    local bpm = reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0)))
+
+    for i = 1, #takeList do
+        local _, take_lyrics = reaper.GetTrackMIDILyrics(reaper.GetMediaItemTake_Track(takeList[i]),2)
+        local split = {}
+        if not take_lyrics then goto skip end
+        for str in string.gmatch(take_lyrics, "([^\t]+)") do
+            table.insert(split, str)
+        end
+
+        for i = 1, #split, 2 do
+            local key = split[i]
+            local value = split[i + 1]
+            if key and value then
+                local measures, beats = key:match("(%d+)%.(%d+)")
+                key = reaper.TimeMap2_beatsToTime(0, tonumber(beats)-1, tonumber(measures)-1)* (bpm / 60)
+
+                lyrics[lyricIdx] = {bar = key, text = value}
+                lyricIdx = lyricIdx + 1
+            end
+        end
+        ::skip::
+    end
+
+
+    for i = 1, #lyrics do
+        reaper.ShowConsoleMsg(lyrics[i].bar .. " " .. lyrics[i].text .. "\n")
+        --remove duplicates
+        for j = i + 1, #lyrics do
+            if lyrics[i].bar == lyrics[j].bar then
+                reaper.ShowConsoleMsg("Duplicate lyric found, removing " .. lyrics[j].text .. " at " .. lyrics[j].bar .. "\n")
+                table.remove(lyrics, j)
+            end
+        end
+    end
+    table.sort(lyrics, function(a, b)
+        return a.bar < b.bar
+    end)
+
+    return lyrics
+end
+
+
 
 --combines notes of all takes in a single sorted list
 local function get_notes()
@@ -283,7 +332,7 @@ local function get_tmb_inputs()
 end
 
 
-local function saveTmb(notes, filename)
+local function saveTmb(notes, lyrics)
     --get data to save
     local data = get_tmb_inputs()
     if not data.tempo then
@@ -296,6 +345,7 @@ local function saveTmb(notes, filename)
         noteList[i] = { notes[i].x_start, notes[i].length, notes[i].y_start, notes[i].delta_pitch, notes[i].y_end }
     end
     data.notes = noteList
+    data.lyrics = lyrics
 
 
     --remove unneeded data and export as json
@@ -305,7 +355,7 @@ local function saveTmb(notes, filename)
     data.isSetting = nil
     local file = io.open(exportpath, "w")
     local json_string = json.encode(data,
-        { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "notes" } })
+        { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "lyrics", "notes" } })
     if file then
         file:write(json_string)
         file:close()
@@ -319,15 +369,20 @@ end
 
 local function main()
     local notes = get_notes()
-    saveTmb(notes, "test.tmb")
+    local lyrics = get_lyrics()
+    saveTmb(notes, lyrics)
 end
 
 
 
 
 --public functions, if used as module
-function exportTmb.getNotes(bwa)
+function exportTmb.getNotes()
     return get_notes
+end
+
+function exportTmb.getLyrics()
+    return get_lyrics
 end
 
 function exportTmb.export()
@@ -338,5 +393,6 @@ end
 if pcall(debug.getlocal, 4, 1) then
     return exportTmb
 else
+    get_lyrics()
     main()
 end
