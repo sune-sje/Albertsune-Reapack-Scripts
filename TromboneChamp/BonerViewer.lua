@@ -3,9 +3,9 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.1.8
+@version 1.2.0
 @changelog
-    Fixed pitch bends (again)
+    Added lyrics support
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua
@@ -27,7 +27,7 @@ local tmb = dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scri
 
 --get notes from tmb script and format values
 local function getNotes()
-    local notesTest = tmb.getNotes("bwa")
+    local notesTest = tmb.getNotes()
     local LinesTest = notesTest()
     for i, dict in pairs(LinesTest) do
         dict.x_start = dict.x_start * 50
@@ -38,6 +38,15 @@ local function getNotes()
         dict.y_end = 1 - (dict.y_end + 200) / 400
     end
     return LinesTest
+end
+
+local function getLyrics()
+    local lyricsR = tmb.getLyrics()
+    local lyrics = lyricsR()
+    for i, dict in pairs(lyrics) do
+        dict.bar = dict.bar * 50
+    end
+    return lyrics
 end
 
 
@@ -91,6 +100,7 @@ end
 
 -- Global variable to store lines
 local lines = getNotes()
+local lyrics = getLyrics()
 
 --Main GUI loop
 local function main()
@@ -222,6 +232,15 @@ local function main()
     imgui.DrawList_AddLine(draw_list, play_cursor_x, window_pos_y, play_cursor_x, window_pos_y + region_avail_y,
         imgui.ColorConvertDouble4ToU32(0.0, 0.0, 0.0, 1.0), 5.0) -- Green vertical line
 
+    
+
+    -- Draw lyrics
+    for _, lyric in ipairs(lyrics) do
+        local x = window_pos_x + lyric.bar * horizontal_scale - scroll_x
+        local y = window_pos_y + 0.9* region_avail_y
+        imgui.DrawList_AddText(draw_list, x, y, imgui.ColorConvertDouble4ToU32(1.0, 1.0, 1.0, 1.0), lyric.text)
+    end
+
     imgui.EndChild(ctx)
 
 
@@ -229,6 +248,7 @@ local function main()
     imgui.SetCursorScreenPos(ctx, window_pos_x + 10, window_pos_y + 10)
     if imgui.Button(ctx, "Reload Preview") then
         lines = getNotes()
+        lyrics = getLyrics()
     end
 
     imgui.SameLine(ctx)
