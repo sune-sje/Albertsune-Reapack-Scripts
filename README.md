@@ -29,7 +29,10 @@ Automatically spaces all notes in selected MIDI takes. It might not be perfect, 
 
 **Features:**  
 ✅ Does all your spacing for you  
-✅ Doesn't touch your slides
+✅ Doesn't touch your slides  
+
+#### **Usage:**  
+Select the MIDI takes you want to adjust, then run the script. It will analyze the note positions and update their lengths to hopefully achieve better spacing.  
 
 ### **BonerViewer**
 
@@ -42,6 +45,13 @@ Tired of manually exporting MIDI, converting to TMB, and only then previewing yo
 ✅ Edit and store TMB metadata within the REAPER project  
 ✅ Import metadata from an existing TMB file  
 ✅ Export TMB directly from reaper, directly to where you'd like it
+
+#### **Usage:**  
+BonerViewer will open a window that previews all unmuted MIDI takes as they would appear in-game. This mimics the usual process of exporting the project MIDI, converting, and playing.  
+
+In this window, you can also configure **TMB settings** and export the TMB file. If you prefer to skip the preview, these functions are also available separately in the action menu as:  
+- `tmbSettings.lua` (for setting TMB metadata)  
+- `ExportTmb.lua` (for exporting the TMB file)  
 
 ---
 
