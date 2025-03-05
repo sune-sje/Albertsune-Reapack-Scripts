@@ -145,10 +145,17 @@ ReaPack Installation Guide
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 {\b Autospacing}\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Automatically spaces all notes in selected MIDI takes. It might not be perfect, especially for longer notes, but it's a great head start.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Features:}\line \u9989 ? Does all your spacing for you\line \u9989 ? Doesn't touch your slides\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b Usage:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Select the MIDI takes you want to adjust, then run the script. It will analyze the note positions and update their lengths to hopefully achieve better spacing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 {\b BonerViewer}\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \u55357 ?\u56524 ? {\i Requires:} {\f1 js_ReaScriptAPI} and {\f1 ReaImGui} from the default ReaTeam Extensions repository\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Tired of manually exporting MIDI, converting to TMB, and only then previewing your chart? {\b BonerViewer} lets you preview your chart {\b inside REAPER}\u8212-no conversions needed.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Features:}\line \u9989 ? Live in-game-style preview of your chart\line \u9989 ? Edit and store TMB metadata within the REAPER project\line \u9989 ? Import metadata from an existing TMB file\line \u9989 ? Export TMB directly from reaper, directly to where you'd like it\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b Usage:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 BonerViewer will open a window that previews all unmuted MIDI takes as they would appear in-game. This mimics the usual process of exporting the project MIDI, converting, and playing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 In this window, you can also configure {\b TMB settings} and export the TMB file. If you prefer to skip the preview, these functions are also available separately in the action menu as:\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\f1 tmbSettings.lua} (for setting TMB metadata)\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\f1 ExportTmb.lua} (for exporting the TMB file)\sa180\par}
 {\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 \u55357 ?\u56492 ? Feedback\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Got suggestions? Contributions? Pull requests? Or just want to tell me I\u8217've made your life easier (or worse)? All are welcome.\par}
