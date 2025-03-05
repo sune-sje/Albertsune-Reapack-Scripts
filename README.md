@@ -1,39 +1,62 @@
 
 # Albertsune's Reapack Scripts
 
-Hi. This is where you find my reascripts. Most are probably meant to be used for Trombone Champ charting, if you don't know what that is ~~_why are you even here_~~ there's probably not much of interest here.
+Hi! This is where you find my reascripts. Most are probably meant to be used for Trombone Champ charting, if you don't know what that is ~~_why are you even here_~~ there's probably not much of interest here, but feel free to look around.
+
+---
 
 
-## Installation
+## 📦 Installation
 
-These scripts are all distributed through reapack, reapers package manager. You can find installation instruction here: <https://reapack.com/>
+These scripts are distributed via **ReaPack**, REAPER’s package manager. If you haven’t installed it yet, follow the instructions here: [ReaPack Installation Guide](https://reapack.com/)  
 
-Once you have this, simply import my repository with this link: 
-<https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/master/index.xml>
+Once that’s set up, add my repository by importing this link into ReaPack:  
 
-And thats it!* Now search up whatever script you'd like through Reapack and run it through the action menu. Or make a keybind for it, all up to you
+```
+https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/master/index.xml
+```
 
+After that, you can find and install my scripts directly through **ReaPack**. Just search for the one you need, install it, and run it from the action menu—or bind it to a hotkey if that’s your style.  
 
-*"almost it". A few scripts needs some plugins to work, these will be stated in the following section. These are all part of Reapacks default repository, just search them up and install. You might need to restart Reaper afterwards
+⚠ **Some scripts require additional dependencies!**  
+These are all available in ReaPack’s default repository. If a script needs anything extra, it’ll be noted in the script descriptions below. You may need to restart REAPER after installing dependencies.  
 
-
-## Scripts
-
-### Autospacing
-
-Script for Trombone Champ that automatically does the spacing for all notes in selected midi takes.
+---
 
 
-### BonerViewer
+## 🎼 Scripts  
 
-> needs "js_ReaScriptAPI" and "ReaImGui" from the default Reateam Extension repository
+### **Autospacing**  
 
-Ever wanted to skip the process of exporting midi, convert it to tmb, and then preview it? Now you can!
-BonerViewer will create a window showing how your chart would look in game. 
+Automatically spaces all notes in selected MIDI takes. It might not be perfect, especially for longer notes, but it's a great head start.
 
-It even has an export function, of which you can edit the tmb's metadata and it'll be stored inside the project itself. Or, if you'd like, you can import it from an already existing tmb
+**Features:**
+✅ Does all your spacing for you
+✅ Doesn't touch your slides
 
 
-## Notes
 
-I am more than happy to take suggestions, contributions, pull requests, or a simple fuck you for making your life easier. Happy charting!
+### **BonerViewer**  
+📌 *Requires:* `js_ReaScriptAPI` and `ReaImGui` from the default ReaTeam Extensions repository  
+
+Tired of manually exporting MIDI, converting to TMB, and only then previewing your chart? **BonerViewer** lets you preview your chart **inside REAPER**—no conversions needed.  
+
+**Features:**  
+✅ Live in-game-style preview of your chart  
+✅ Edit and store TMB metadata within the REAPER project  
+✅ Import metadata from an existing TMB file
+✅ Export TMB directly from reaper, directly to where you'd like it
+
+---
+
+
+## 💬 Feedback  
+
+Got suggestions? Contributions? Pull requests? Or just want to tell me I’ve made your life easier (or worse)? All are welcome.  
+
+Happy charting! 🎺🎶  
+
+
+---
+
+~~I definitely did not get chatgpt to write this for me~~
