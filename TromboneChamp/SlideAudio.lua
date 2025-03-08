@@ -8,9 +8,11 @@ if not mu.CheckDependencies('ExportTmb') then return end
 
 -- Get the bend depth setting from the project state, default to 12 if not set
 local retval, bend_depth = reaper.GetProjExtState(0, "TmbSettings", "bendrange")
-if not retval or bend_depth == 0 then
+bend_depth = tonumber(bend_depth)
+if not retval or not bend_depth or bend_depth == 0 then
   bend_depth = 12
 end
+
 
 -- Returns a list of all unmuted MIDI takes on a given track
 local function get_track_takes(track)
