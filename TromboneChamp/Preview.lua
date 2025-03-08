@@ -75,7 +75,7 @@ end
 local function get_tcp_width()
     local main_hwnd = reaper.GetMainHwnd()
 
-
+    
     local arrange_view_hwnd = reaper.JS_Window_FindChildByID(main_hwnd, 1000) -- Arrange View ID is 1000
 
     if arrange_view_hwnd then
@@ -92,7 +92,7 @@ end
 -- Mute or unmute tracks based on check_state
 local function muteUnmute_tracks()
     for _, track_idx in ipairs(mute_tracks) do
-        local track = reaper.GetTrack(0, track_idx) -- Convert to 0-based index
+        local track = reaper.GetTrack(0, track_idx)  -- Convert to 0-based index
         if track then
             reaper.SetMediaTrackInfo_Value(track, "B_MUTE", check_state and 1 or 0)
         end
@@ -121,7 +121,7 @@ local function main()
     local horizontal_zoom = reaper.GetHZoomLevel()
     local arrange_start, arrange_end = reaper.GetSet_ArrangeView2(0, false, 0, 0)
     local horizontal_scale = horizontal_zoom /
-        (reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0))) / 1.2)
+    (reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0))) / 1.2)
     local tcp_width = get_tcp_width()
 
 
@@ -129,9 +129,9 @@ local function main()
     imgui.SetNextWindowSize(ctx, 400, 300, imgui.Cond_FirstUseEver)
     imgui.SetNextWindowDockID(ctx, -1, imgui.Cond_FirstUseEver)
     local visible, open = imgui.Begin(ctx, 'BonerViewer', true, imgui.WindowFlags_NoSavedSettings) --imgui.WindowFlags_NoMove)--imgui.WindowFlags_NoSavedSettings) -- imgui.WindowFlags_TopMost)
-    if not visible then
+    if not visible then 
         setExitState()
-        return
+        return 
     end
     if not open then
         imgui.End(ctx)
@@ -249,12 +249,12 @@ local function main()
     imgui.DrawList_AddLine(draw_list, play_cursor_x, window_pos_y, play_cursor_x, window_pos_y + region_avail_y,
         imgui.ColorConvertDouble4ToU32(0.0, 0.0, 0.0, 1.0), 5.0) -- Green vertical line
 
-
+    
 
     -- Draw lyrics
     for _, lyric in ipairs(lyrics) do
         local x = window_pos_x + lyric.bar * horizontal_scale - scroll_x
-        local y = window_pos_y + 0.9 * region_avail_y
+        local y = window_pos_y + 0.9* region_avail_y
         imgui.DrawList_AddText(draw_list, x, y, imgui.ColorConvertDouble4ToU32(1.0, 1.0, 1.0, 1.0), lyric.text)
     end
 
@@ -262,8 +262,7 @@ local function main()
     for _, zone in ipairs(improv_zones) do
         local x_start = window_pos_x + zone[1] * horizontal_scale - scroll_x
         local x_end = window_pos_x + zone[2] * horizontal_scale - scroll_x
-        imgui.DrawList_AddText(draw_list, x_start + (x_end - x_start) / 2 - 20, window_pos_y + 0.1 * region_avail_y,
-            imgui.ColorConvertDouble4ToU32(1.0, 1.0, 1.0, 1.0), "Improv")
+        imgui.DrawList_AddText(draw_list, x_start+(x_end-x_start)/2-20, window_pos_y + 0.1 * region_avail_y, imgui.ColorConvertDouble4ToU32(1.0, 1.0, 1.0, 1.0), "Improv")
         imgui.DrawList_AddRectFilled(draw_list, x_start, window_pos_y, x_end, window_pos_y + region_avail_y,
             imgui.ColorConvertDouble4ToU32(0.0, 0.0, 0.0, 0.5))
     end
@@ -312,8 +311,11 @@ local function main()
 end
 
 -- Makes sure to reset track mutes when the script exits
-reaper.atexit(function()
+reaper.atexit(function ()
     check_state = false
     muteUnmute_tracks()
 end)
 main()
+
+
+
