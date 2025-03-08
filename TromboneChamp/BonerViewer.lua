@@ -12,7 +12,7 @@
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua
     [main=main] tmbSettings.lua
-    BonerViewer/SlideAudio.lua
+    BonerViewer/SlideAudio.lua https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/refs/heads/master/TromboneChamp/SlideAudio.lua
     BonerViewer/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
     BonerViewer/dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
 
