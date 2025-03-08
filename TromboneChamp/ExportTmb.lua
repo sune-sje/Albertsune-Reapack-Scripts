@@ -4,7 +4,8 @@
 package.path = reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/MIDIUtils.lua'
 local mu = require 'MIDIUtils'
 if not mu.CheckDependencies('ExportTmb') then return end
-local json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/dkjson.lua")
+local json = dofile(reaper.GetResourcePath() ..
+"/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/dkjson.lua")
 
 
 --import imgui (used for one single function lmaoo)
@@ -14,12 +15,11 @@ local imgui = require 'imgui' '0.9.3'
 --import dkjson for exporting. I use dofile here instead because why tf not. Variation is good LMAO
 
 local exportTmb = {}
-local _, bend_range = reaper.GetProjExtState(0, "TmbSettings", "bendrange")
+local retval, bend_range = reaper.GetProjExtState(0, "TmbSettings", "bendrange")
 
-if not tonumber(bend_range) then bend_range = 2 end
+if not retval then bend_range = 12 end
 bend_range = tonumber(bend_range)
 
-reaper.ClearConsole()
 
 
 
@@ -52,7 +52,100 @@ local function merge_pitch_shifts(take)
     end
 end
 
+local function process_midi_text(take)
+    if not take or not reaper.TakeIsMIDI(take) then
+        reaper.ShowMessageBox("No valid MIDI take found!", "Error", 0)
+        return
+    end
+    --initialize take in midiutils
+    mu.MIDI_InitializeTake(take)
+    mu.MIDI_OpenWriteTransaction(take)
+    if select(4, mu.MIDI_CountEvts(take)) == 0 then
+        return
+    end
 
+    local item = reaper.GetMediaItemTake_Item(take)
+    local loop = reaper.GetMediaItemInfo_Value(item, "B_LOOPSRC")
+    local item_start = reaper.GetMediaItemInfo_Value(item, "D_POSITION")
+    local item_length = reaper.GetMediaItemInfo_Value(item, "D_LENGTH")
+    local source_length = reaper.GetMediaSourceLength(reaper.GetMediaItemTake_Source(take), false) * mu.MIDI_GetPPQ(take) /
+    reaper.GetMediaItemTakeInfo_Value(take, "D_PLAYRATE")
+
+    --get ready for loopinggg
+    local bpm = reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0)))
+    local lyrics = {}
+    local improv_zones = {}
+    local loopNum = 0
+    local currentPos = 0
+    local lyricIdx = 1
+    local improvIdx = 1
+
+    --first loop only if the take loops; will add up loop offset every iteration which will later be added to the notes ppq position
+    while true do
+        --exit early if we're past the media items end
+        if reaper.MIDI_GetProjTimeFromPPQPos(take, currentPos) >= item_start + item_length then
+            break
+        end
+        local midiIdx = 0
+        local loop_offset = loopNum * source_length
+
+
+
+        local skipped = 0
+        --second loop loops through the midi take itself and formats all notes as in tmb
+        while true do
+            ::continue::
+            -- get information on current note
+            local retval, selected, muted, ppqpos, type, msg = mu.MIDI_GetTextSysexEvt(take, midiIdx)
+            if not retval then break end
+
+            currentPos = ppqpos + loop_offset
+            if reaper.MIDI_GetProjTimeFromPPQPos(take, currentPos) >= item_start + item_length - 0.001 then
+                break
+            end
+
+
+            if type == 89 then
+                midiIdx = midiIdx + 1
+                goto continue
+            end
+
+            if not msg then
+                midiIdx = midiIdx + 1
+                goto continue
+            end
+            if reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos) < item_start then
+                midiIdx = midiIdx + 1
+                skipped = skipped + 1
+                goto continue
+            end
+
+
+
+
+            ppqpos = currentPos
+
+            local pos = reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos)
+            pos = pos * (bpm / 60)
+
+
+            if msg:find("improv_start") then
+                improv_zones[improvIdx] = {}
+                improv_zones[improvIdx][1] = pos
+            elseif msg:find("improv_end") then
+                improv_zones[improvIdx][2] = pos
+                improvIdx = improvIdx + 1
+            else
+                lyrics[lyricIdx] = { bar = pos, text = msg }
+                lyricIdx = lyricIdx + 1
+            end
+
+            midiIdx = midiIdx + 1
+        end
+        loopNum = loopNum + 1
+    end
+    return lyrics, improv_zones
+end
 
 
 --loops through a take and returns a list of notes in tmb format
@@ -63,7 +156,7 @@ local function process_midi_notes(take)
     end
     --initialize take in midiutils
     mu.MIDI_InitializeTake(take)
-    mu.MIDI_OpenWriteTransaction(take)
+    --mu.MIDI_OpenWriteTransaction(take)
 
     if select(2, mu.MIDI_CountEvts(take)) == 0 then
         return
@@ -77,7 +170,8 @@ local function process_midi_notes(take)
     local loop = reaper.GetMediaItemInfo_Value(item, "B_LOOPSRC")
     local item_start = reaper.GetMediaItemInfo_Value(item, "D_POSITION")
     local item_length = reaper.GetMediaItemInfo_Value(item, "D_LENGTH")
-    local source_length = reaper.GetMediaSourceLength(reaper.GetMediaItemTake_Source(take), false) * mu.MIDI_GetPPQ(take)
+    local source_length = reaper.GetMediaSourceLength(reaper.GetMediaItemTake_Source(take), false) * mu.MIDI_GetPPQ(take) /
+    reaper.GetMediaItemTakeInfo_Value(take, "D_PLAYRATE")
 
     --get ready for loopinggg
     local bpm = reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0)))
@@ -104,19 +198,19 @@ local function process_midi_notes(take)
             -- get information on current note
             local retval, selected, muted, start_ppqpos, end_ppqpos, chan, pitch, vel = mu.MIDI_GetNote(take, midiIdx)
             if not retval then break end
-            
 
-            
+            currentPos = start_ppqpos + loop_offset
+            if reaper.MIDI_GetProjTimeFromPPQPos(take, currentPos) >= item_start + item_length - 0.001 then
+                break
+            end
+
             if reaper.MIDI_GetProjTimeFromPPQPos(take, start_ppqpos) < item_start then
                 midiIdx = midiIdx + 1
                 skipped = skipped + 1
                 goto continue
             end
 
-            currentPos = start_ppqpos + loop_offset
-            if reaper.MIDI_GetProjTimeFromPPQPos(take, currentPos) >= item_start + item_length-0.001 then
-                break
-            end
+
 
             --update pos to account for loop
             start_ppqpos = currentPos
@@ -132,13 +226,9 @@ local function process_midi_notes(take)
             local end_pitch_shift = get_pitch_shift(take, chan, end_pos)
             local start_pitch = convert_pitch((pitch + (start_pitch_shift - 8192) / (8192 / bend_range)))
             local end_pitch = convert_pitch((pitch + (end_pitch_shift - 8192) / (8192 / bend_range)))
-            local start_pos = start_pos * (bpm / 60)
-            local end_pos = end_pos * (bpm / 60)
+            start_pos = start_pos * (bpm / 60)
+            end_pos = end_pos * (bpm / 60)
 
-            --[[if start_pos == end_pos then
-                midiIdx = midiIdx + 1
-                goto continue
-            end--]]
 
 
             --oh boy, here come the slides
@@ -161,7 +251,7 @@ local function process_midi_notes(take)
                     notes[tmbIdx - 1].y_end = start_pitch
                     notes[tmbIdx - 1].length = end_pos - notes[tmbIdx - 1].x_start
                     notes[tmbIdx - 1].x_end = end_pos
-                --default, add note to tmb
+                    --default, add note to tmb
                 else
                     notes[tmbIdx] = {
                         x_start = start_pos,
@@ -210,56 +300,37 @@ local function get_unmuted_takes()
     return unmuted_takes
 end
 
-
-
---combines lyrics of all tracks of unmuted takes in a single sorted list
-local function get_lyrics()
+--combines lyrics of all takes in a single sorted list
+local function get_text()
     local takeList = get_unmuted_takes()
     local lyrics = {}
-    local lyricIdx = 1
-    local bpm = reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0)))
+    local improv_zones = {}
 
     for i = 1, #takeList do
-        local _, take_lyrics = reaper.GetTrackMIDILyrics(reaper.GetMediaItemTake_Track(takeList[i]),2)
-        local split = {}
+        local take_lyrics, take_improv_zones = process_midi_text(takeList[i])
         if not take_lyrics then goto skip end
-        for str in string.gmatch(take_lyrics, "([^\t]+)") do
-            table.insert(split, str)
-        end
-
-        for i = 1, #split, 2 do
-            local key = split[i]
-            local value = split[i + 1]
-            if key and value then
-                local measures, beats = key:match("(%d+)%.(%d+)")
-                key = reaper.TimeMap2_beatsToTime(0, tonumber(beats)-1, tonumber(measures)-1)* (bpm / 60)
-
-                lyrics[lyricIdx] = {bar = key, text = value}
-                lyricIdx = lyricIdx + 1
-            end
+        for j = 1, #take_lyrics do
+            table.insert(lyrics, take_lyrics[j])
         end
         ::skip::
-    end
-
-
-    for i = 1, #lyrics do
-        reaper.ShowConsoleMsg(lyrics[i].bar .. " " .. lyrics[i].text .. "\n")
-        --remove duplicates
-        for j = i + 1, #lyrics do
-            if lyrics[i].bar == lyrics[j].bar then
-                reaper.ShowConsoleMsg("Duplicate lyric found, removing " .. lyrics[j].text .. " at " .. lyrics[j].bar .. "\n")
-                table.remove(lyrics, j)
-            end
+        if not take_improv_zones then goto skip2 end
+        for j = 1, #take_improv_zones do
+            table.insert(improv_zones, take_improv_zones[j])
         end
+        ::skip2::
     end
+
     table.sort(lyrics, function(a, b)
         return a.bar < b.bar
     end)
 
-    return lyrics
+    table.sort(improv_zones, function(a, b)
+        return a[1] < b[1]
+    end)
+
+
+    return lyrics, improv_zones
 end
-
-
 
 --combines notes of all takes in a single sorted list
 local function get_notes()
@@ -272,9 +343,7 @@ local function get_notes()
         for j = 1, #take_notes do
             if take_notes[j].length > 0.0005 then
                 table.insert(notes, take_notes[j])
-                --reaper.ShowConsoleMsg("Zero length note found, skipping\n")
             end
-            
         end
         ::skip::
     end
@@ -332,7 +401,7 @@ local function get_tmb_inputs()
 end
 
 
-local function saveTmb(notes, lyrics)
+local function saveTmb(notes, lyrics, improv_zones)
     --get data to save
     local data = get_tmb_inputs()
     if not data.tempo then
@@ -341,21 +410,21 @@ local function saveTmb(notes, lyrics)
     if not data.endpoint then data.endpoint = 0 end
     local noteList = {}
     for i = 1, #notes do
-        data.endpoint = math.max(data.endpoint, notes[i].x_start + notes[i].length)
+        data.endpoint = math.max(data.endpoint, math.ceil(notes[i].x_start + notes[i].length) + 4)
         noteList[i] = { notes[i].x_start, notes[i].length, notes[i].y_start, notes[i].delta_pitch, notes[i].y_end }
     end
     data.notes = noteList
     data.lyrics = lyrics
+    data.improv_zones = improv_zones
 
 
     --remove unneeded data and export as json
     local exportpath = data.exportpath
     data.exportpath = nil
     data.bendrange = nil
-    data.isSetting = nil
     local file = io.open(exportpath, "w")
     local json_string = json.encode(data,
-        { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "lyrics", "notes" } })
+        { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "improv_zones", "lyrics", "notes" } })
     if file then
         file:write(json_string)
         file:close()
@@ -369,8 +438,9 @@ end
 
 local function main()
     local notes = get_notes()
-    local lyrics = get_lyrics()
-    saveTmb(notes, lyrics)
+    --local lyrics, improv_zones = get_lyrics()
+    local lyrics, improv_zones = get_text()
+    saveTmb(notes, lyrics, improv_zones)
 end
 
 
@@ -381,8 +451,9 @@ function exportTmb.getNotes()
     return get_notes
 end
 
-function exportTmb.getLyrics()
-    return get_lyrics
+function exportTmb.getText()
+    return get_text
+    --return get_lyrics
 end
 
 function exportTmb.export()
@@ -393,6 +464,5 @@ end
 if pcall(debug.getlocal, 4, 1) then
     return exportTmb
 else
-    get_lyrics()
     main()
 end

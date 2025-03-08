@@ -3,7 +3,8 @@ package.path = reaper.ImGui_GetBuiltinPath() .. '/?.lua'
 local imgui = require 'imgui' '0.9.3'
 
 
-local json = dofile(reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/dkjson.lua")
+local json = dofile(reaper.GetResourcePath() ..
+"/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/dkjson.lua")
 
 
 
@@ -18,7 +19,7 @@ local settings = {
     note_color_start = imgui.ColorConvertDouble4ToU32(1.0, 1.0, 0.0, 0.0),
     note_color_end = imgui.ColorConvertDouble4ToU32(1.0, 0.0, 0.0, 1.0),
     checkbox = false,
-    bendrange = 2,
+    bendrange = 12,
     name = "",
     shortName = "",
     author = "",
@@ -93,16 +94,16 @@ local function loop()
         imgui.WindowFlags_NoCollapse + imgui.WindowFlags_NoResize + imgui.WindowFlags_NoSavedSettings) -- + imgui.WindowFlags_NoResize)
 
     if not visible then
-        reaper.SetProjExtState(0, "TmbSettings", "isSetting", "false")
+        reaper.SetExtState("BonerViewer", "isSetting", "false", false)
         return
     end
     if not open then
-        reaper.SetProjExtState(0, "TmbSettings", "isSetting", "false")
+        reaper.SetExtState("BonerViewer", "isSetting", "false", false)
         imgui.End(ctx)
         return
     end
 
-    if select(2, reaper.GetProjExtState(0, "TmbSettings", "isSetting")) == "false" then
+    if reaper.GetExtState("BonerViewer", "isSetting") == "false" then
         imgui.End(ctx)
         return
     end
@@ -140,7 +141,8 @@ local function loop()
 
     _, settings.difficulty = imgui.InputText(ctx, "Difficulty", settings.difficulty, imgui.InputTextFlags_CharsDecimal)
 
-    _, settings.savednotespacing = imgui.InputText(ctx, "Note Spacing", settings.savednotespacing, imgui.InputTextFlags_CharsDecimal)
+    _, settings.savednotespacing = imgui.InputText(ctx, "Note Spacing", settings.savednotespacing,
+        imgui.InputTextFlags_CharsDecimal)
 
     _, settings.endpoint = imgui.InputText(ctx, "Endpoint (*)", settings.endpoint, imgui.InputTextFlags_CharsDecimal)
 
@@ -180,7 +182,7 @@ local function loop()
 
     if imgui.Button(ctx, "Save") then
         saveSettings()
-        reaper.SetProjExtState(0, "TmbSettings", "isSetting", "false")
+        reaper.SetExtState("BonerViewer", "isSetting", "false", false)
         imgui.End(ctx)
         return
     end
