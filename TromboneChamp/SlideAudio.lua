@@ -292,6 +292,7 @@ end
 
 
 
+
 -- Loops through a take and returns a list of notes in tmb format
 local function process_midi_notes(take)
   if not take or not reaper.TakeIsMIDI(take) then
@@ -338,6 +339,7 @@ local function process_midi_notes(take)
 
     -- Update pitch to include pitch shifts and convert all to tmb format
     -- TODO: idk if it actually retains existing pitch shifts?
+    -- It definitely doesn't for non-slides
     local start_pitch_shift = get_pitch_shift(take, start_pos)
     local end_pitch_shift = get_pitch_shift(take, end_pos)
     local start_pitch = (currentNote.pitch + (start_pitch_shift - 8192) / (8192 / bend_depth))
@@ -372,8 +374,7 @@ local function process_midi_notes(take)
             table.insert(deleteNotes, sequence[i].idx)
           end
           table.insert(extendNotes, { sequence[1].idx, sequence[#sequence].endppq })
-          table.insert(pitchEvents,
-            { sequence[#sequence].endppq, 8192 - get_pitch_diff(take, sequence[#sequence], sequence[1]), 0 })
+          table.insert(pitchEvents, { sequence[#sequence].endppq, 8192 - get_pitch_diff(take, sequence[#sequence], sequence[1]), 0 })
           table.insert(pitchEvents, { sequence[#sequence].endppq + 1, 8192, 0 })
         end
         sequence = {}
@@ -384,22 +385,46 @@ local function process_midi_notes(take)
     midiIdx = midiIdx + 1
   end
 
+  if #sequence > 1 then
+    table.insert(pitchEvents, { sequence[1].startppq, 8192, 2 })
+    local pitch_shift = 8192
+    for i = 2, #sequence do
+      if sequence[i - 1].pitch == sequence[i].pitch then
+        pitch_shift = 8192 - get_pitch_diff(take, sequence[i - 1], sequence[1])
+        table.insert(pitchEvents, { sequence[i - 1].endppq, pitch_shift, 2 })
+      end
+      table.insert(deleteNotes, sequence[i].idx)
+    end
+    table.insert(extendNotes, { sequence[1].idx, sequence[#sequence].endppq })
+    table.insert(pitchEvents, { sequence[#sequence].endppq, 8192 - get_pitch_diff(take, sequence[#sequence], sequence[1]), 0 })
+    table.insert(pitchEvents, { sequence[#sequence].endppq + 1, 8192, 0 })
+  end
+
+
+
+
 
   -- Remove end notes and extend first note
   for i = 1, #extendNotes do
     mu.MIDI_SetNote(take, extendNotes[i][1], NULL, NULL, NULL, extendNotes[i][2])
   end
-  for i = 1, #deleteNotes do
-    mu.MIDI_DeleteNote(take, deleteNotes[i])
-  end
+
   local deleteCC = {}
   local _, _, cc_count = mu.MIDI_CountEvts(take)
   for i = 0, cc_count - 1 do
-    local _, _, _, _, cctype = mu.MIDI_GetCC(take, i)
+    local _, _, _, ppqpos, cctype = mu.MIDI_GetCC(take, i)
     if cctype == 224 then
-      table.insert(deleteCC, i)
+      for _, note in ipairs(extendNotes) do
+        if ppqpos >= select(4,mu.MIDI_GetNote(take, note[1] )) and ppqpos <= note[2] then
+          table.insert(deleteCC, i)
+        end
+      end
     end
   end
+  for i = 1, #deleteNotes do
+    mu.MIDI_DeleteNote(take, deleteNotes[i])
+  end
+
 
   for i = 1, #deleteCC do
     mu.MIDI_DeleteCC(take, deleteCC[i])
