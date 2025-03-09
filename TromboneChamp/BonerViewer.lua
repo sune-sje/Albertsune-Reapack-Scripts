@@ -5,12 +5,13 @@
 @author Albertsune
 @version 1.3.2
 @changelog
-    fixed slides being at ends of takes
-    something else i forgor
+    Fixed missing preview file (I forgor)
+    Added volume slider
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua
     [main=main] tmbSettings.lua
+    BonerViewer/Preview.lua https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/refs/heads/master/TromboneChamp/Preview.lua
     BonerViewer/SlideAudio.lua https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/refs/heads/master/TromboneChamp/SlideAudio.lua
     BonerViewer/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
     BonerViewer/dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua

@@ -302,6 +302,14 @@ local function main()
         muteUnmute_tracks()
     end
 
+    if check_state then
+        imgui.PushItemWidth(ctx, 200)
+        local changed, new_volume_db = imgui.SliderDouble(ctx, "Volume (dB)", 20 * math.log(reaper.GetMediaTrackInfo_Value(reaper.GetTrack(0, boner_track), "D_VOL"), 10), -60, 12)
+        if changed then
+            reaper.SetMediaTrackInfo_Value(reaper.GetTrack(0, boner_track), "D_VOL", 10^(new_volume_db/ 20))
+        end
+    end
+
 
 
     imgui.End(ctx)
