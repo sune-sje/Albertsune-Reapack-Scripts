@@ -3,7 +3,7 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.3.2
+@version 1.3.3
 @changelog
     Fixed missing preview file (I forgor)
     Added volume slider
