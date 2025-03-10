@@ -34,6 +34,127 @@ local function get_track_takes(track)
   return takes
 end
 
+
+-- Adds a new track with copied FX from unmuted tracks and sets it up
+local function AddTrackWithBonerFX(new_track_name)
+  --if pitch bent track already exists, delete before duplicating
+  for i = 0, reaper.CountTracks(0) - 1 do
+    local existing_track = reaper.GetTrack(0, i)
+    local _, existing_name = reaper.GetSetMediaTrackInfo_String(existing_track, "P_NAME", "", false)
+    if existing_name == new_track_name then
+      reaper.DeleteTrack(existing_track)
+      break
+    end
+  end
+
+
+  -- Create new track
+  reaper.InsertTrackAtIndex(reaper.CountTracks(0), true)
+  local new_track = reaper.GetTrack(0, reaper.CountTracks(0) - 1)
+  reaper.GetSetMediaTrackInfo_String(new_track, "P_NAME", new_track_name, true)
+  reaper.SetTrackUIMute(new_track, 1, -1)
+  reaper.SetMediaTrackInfo_Value(new_track, "B_MUTE", 1)
+
+  
+  
+  local sample_folder = reaper.GetResourcePath() .. "/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/Samples/" -- Change this to your sample directory
+local sample_map = {
+    [48] = "t2_tromboneC1.wav", [50] = "t2_tromboneD1.wav", [52] = "t2_tromboneE1.wav", 
+    [53] = "t2_tromboneF1.wav", [55] = "t2_tromboneG1.wav", [57] = "t2_tromboneA1.wav", [59] = "t2_tromboneB1.wav", 
+    [60] = "t2_tromboneC2.wav", [62] = "t2_tromboneD2.wav", [64] = "t2_tromboneE2.wav", [65] = "t2_tromboneF2.wav", 
+    [67] = "t2_tromboneG2.wav", [69] = "t2_tromboneA2.wav", [71] = "t2_tromboneB2.wav", [72] = "t2_tromboneC3.wav"
+}
+
+local function find_nearest_higher(note)
+    for i = note, 72 do
+        if sample_map[i] then return i end
+    end
+    return 72
+end
+
+local function add_rs5k_instance(note, sample_file, transpose, track)
+    local fx_idx = reaper.TrackFX_AddByName(track, "ReaSamplomatic5000", false, -1)
+    local normal_note = note/127 
+    transpose = (transpose+80)/160
+    
+    reaper.TrackFX_SetParam(track, fx_idx, 3, normal_note) -- Note start
+    reaper.TrackFX_SetParam(track, fx_idx, 4, normal_note) -- Note end
+    reaper.TrackFX_SetParam(track, fx_idx, 5, transpose) -- Pitch start
+    reaper.TrackFX_SetParam(track, fx_idx, 9, 0) -- attack
+    reaper.TrackFX_SetParam(track, fx_idx, 11, 1) -- Obey Note offs
+    reaper.TrackFX_SetParam(track, fx_idx, 16, 0) -- pitch bend range
+    
+    local sample_path = sample_folder .. sample_file
+    reaper.TrackFX_SetNamedConfigParm(track, fx_idx, "FILE0", sample_path)
+    reaper.TrackFX_SetNamedConfigParm(track, fx_idx, "MODE", 2)
+
+    reaper.TrackFX_SetNamedConfigParm(new_track, fx_idx, "param.15.mod.active", 1)
+    reaper.TrackFX_SetNamedConfigParm(new_track, fx_idx, "param.15.plink.active", 1)
+    reaper.TrackFX_SetNamedConfigParm(new_track, fx_idx, "param.15.plink.midi_msg", 224)
+    reaper.TrackFX_SetNamedConfigParm(new_track, fx_idx, "param.15.plink.effect", -100)
+    reaper.TrackFX_SetNamedConfigParm(new_track, fx_idx, "param.15.plink.scale", 0.15)
+    reaper.TrackFX_SetNamedConfigParm(new_track, fx_idx, "param.15.plink.offset", 8.5/3)
+
+end
+
+reaper.PreventUIRefresh(1)
+
+for note = 47, 73 do -- B2 to C5
+    local base_note = find_nearest_higher(note)
+    if base_note then
+        local transpose = note - base_note
+        add_rs5k_instance(note, sample_map[base_note], transpose, new_track)
+    end
+end
+
+reaper.PreventUIRefresh(-1)
+
+
+  local used_tracks = {}
+  -- Iterate through existing tracks
+  for i = 0, reaper.CountTracks(0) - 2 do -- Exclude new track
+    local track = reaper.GetTrack(0, i)
+    local track_muted = reaper.GetMediaTrackInfo_Value(track, "B_MUTE")
+
+    if track_muted == 0 then -- Track is not muted
+      local has_unmuted_midi = false
+
+      -- Iterate through media items on the track
+      for j = 0, reaper.CountTrackMediaItems(track) - 1 do
+        local item = reaper.GetTrackMediaItem(track, j)
+        local take = reaper.GetActiveTake(item)
+
+        if take and reaper.TakeIsMIDI(take) then
+          local item_muted = reaper.GetMediaItemInfo_Value(item, "B_MUTE")
+          if item_muted == 0 then
+            has_unmuted_midi = true
+            break
+          end
+        end
+      end
+
+      -- If track has unmuted MIDI take, copy its FX and volume to new track
+      if has_unmuted_midi then
+        table.insert(used_tracks, i)
+        for fx = 0, reaper.TrackFX_GetCount(track) - 1 do
+          --reaper.TrackFX_CopyToTrack(track, fx, new_track, fx, false)
+          reaper.SetMediaTrackInfo_Value(new_track, "D_VOL", reaper.GetMediaTrackInfo_Value(track, "D_VOL"))
+        end
+      end
+    end
+  end
+
+  reaper.TrackList_AdjustWindows(false)
+  reaper.UpdateArrange()
+  local extTracks = ""
+  for i = 1, #used_tracks do
+    extTracks = extTracks .. used_tracks[i] .. ","
+  end
+  reaper.SetExtState("BonerViewer", "activeTracks", extTracks, false)
+  return new_track
+end
+
+
 -- Adds a new track with copied FX from unmuted tracks and sets it up
 local function AddTrackWithCopiedFX(new_track_name)
   --if pitch bent track already exists, delete before duplicating
@@ -256,9 +377,9 @@ local function get_pitch_shift(take, time)
 end
 
 -- Calculates the pitch difference between two notes
-local function get_pitch_diff(take, note1, note2)
+local function get_pitch_diff(note1, note2)
   local diff = note2.pitch - note1.pitch
-  return diff * (8192 / bend_depth)
+  return diff * (8192 / 12)
 end
 
 
@@ -311,10 +432,6 @@ local function process_midi_notes(take)
   -- Since reaper can't differentiate channels for pitch shifts, we merge them all into channel one
   merge_pitch_shifts(take)
 
-  -- Get length difference in media item and its source, in case it loops
-  local item = reaper.GetMediaItemTake_Item(take)
-  local loop = reaper.GetMediaItemInfo_Value(item, "B_LOOPSRC")
-
   --get ready for loopinggg
   local prevNote = {}
   local deleteNotes = {}
@@ -331,31 +448,14 @@ local function process_midi_notes(take)
     local currentNote = get_note(take, midiIdx)
     if not currentNote.retval then break end
 
-
-
-    --convert to proj time
-    local start_pos = reaper.MIDI_GetProjTimeFromPPQPos(take, currentNote.startppq)
-    local end_pos = reaper.MIDI_GetProjTimeFromPPQPos(take, currentNote.endppq)
-
-    -- Update pitch to include pitch shifts and convert all to tmb format
-    -- TODO: idk if it actually retains existing pitch shifts?
-    -- It definitely doesn't for non-slides
-    local start_pitch_shift = get_pitch_shift(take, start_pos)
-    local end_pitch_shift = get_pitch_shift(take, end_pos)
-    local start_pitch = (currentNote.pitch + (start_pitch_shift - 8192) / (8192 / bend_depth))
-    local end_pitch = (currentNote.pitch + (end_pitch_shift - 8192) / (8192 / bend_depth))
-
-
-
-
-
     --[[
     oh boy, here come the slides
 
     Basically adds notes to a list if they overlap, and reset that list when they don't.
     Before resetting it'll add pitch bend events at start, end, and at every note intersection,
-    interpolating from the first note in the sequence.
+    interpolating from the first note in the sequence. Also adds a pitch even at start of non-slide notes to ensure existing pitch bends stay
     --]]
+    
     if prevNote.retval then
       if prevNote.endppq >= currentNote.startppq then
         if #sequence == 0 then
@@ -364,18 +464,19 @@ local function process_midi_notes(take)
         table.insert(sequence, currentNote)
       else
         if #sequence > 1 then
-          table.insert(pitchEvents, { sequence[1].startppq, 8192, 2 })
-          local pitch_shift = 8192
+          table.insert(pitchEvents, { sequence[1].startppq, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, sequence[1].startppq)), 2 })
           for i = 2, #sequence do
             if sequence[i - 1].pitch == sequence[i].pitch then
-              pitch_shift = 8192 - get_pitch_diff(take, sequence[i - 1], sequence[1])
-              table.insert(pitchEvents, { sequence[i - 1].endppq, pitch_shift, 2 })
+              table.insert(pitchEvents, { sequence[i - 1].endppq, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, sequence[i - 1].endppq)) - get_pitch_diff(sequence[i - 1], sequence[1]), 2 })
             end
             table.insert(deleteNotes, sequence[i].idx)
           end
           table.insert(extendNotes, { sequence[1].idx, sequence[#sequence].endppq })
-          table.insert(pitchEvents, { sequence[#sequence].endppq, 8192 - get_pitch_diff(take, sequence[#sequence], sequence[1]), 0 })
-          table.insert(pitchEvents, { sequence[#sequence].endppq + 1, 8192, 0 })
+          table.insert(pitchEvents, { sequence[#sequence].endppq, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, sequence[#sequence].endppq)) - get_pitch_diff(sequence[#sequence], sequence[1]), 0 })
+          table.insert(pitchEvents, { sequence[#sequence].endppq + (currentNote.startppq - sequence[#sequence].endppq)/2, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, sequence[#sequence].endppq + (currentNote.startppq - sequence[#sequence].endppq)/2)), 0 })
+        else
+          table.insert(pitchEvents, {currentNote.startppq, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, currentNote.startppq)), 0})
+          --table.insert(pitchEvents, {currentNote.endppq, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, currentNote.endppq)), 0})
         end
         sequence = {}
       end
@@ -385,19 +486,18 @@ local function process_midi_notes(take)
     midiIdx = midiIdx + 1
   end
 
+
+  --do half of the same thing again after exiting loop to make sure slides at the end of takes get included
   if #sequence > 1 then
-    table.insert(pitchEvents, { sequence[1].startppq, 8192, 2 })
-    local pitch_shift = 8192
+    table.insert(pitchEvents, { sequence[1].startppq, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, sequence[1].startppq)), 2 })
     for i = 2, #sequence do
       if sequence[i - 1].pitch == sequence[i].pitch then
-        pitch_shift = 8192 - get_pitch_diff(take, sequence[i - 1], sequence[1])
-        table.insert(pitchEvents, { sequence[i - 1].endppq, pitch_shift, 2 })
+        table.insert(pitchEvents, { sequence[i - 1].endppq, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, sequence[i - 1].endppq)) - get_pitch_diff(sequence[i - 1], sequence[1]), 2 })
       end
       table.insert(deleteNotes, sequence[i].idx)
     end
     table.insert(extendNotes, { sequence[1].idx, sequence[#sequence].endppq })
-    table.insert(pitchEvents, { sequence[#sequence].endppq, 8192 - get_pitch_diff(take, sequence[#sequence], sequence[1]), 0 })
-    table.insert(pitchEvents, { sequence[#sequence].endppq + 1, 8192, 0 })
+    table.insert(pitchEvents, { sequence[#sequence].endppq, get_pitch_shift(take, reaper.MIDI_GetProjTimeFromPPQPos(take, sequence[#sequence].endppq)) - get_pitch_diff(sequence[#sequence], sequence[1]), 0 })
   end
 
 
@@ -412,11 +512,17 @@ local function process_midi_notes(take)
   local deleteCC = {}
   local _, _, cc_count = mu.MIDI_CountEvts(take)
   for i = 0, cc_count - 1 do
-    local _, _, _, ppqpos, cctype = mu.MIDI_GetCC(take, i)
+    local _, _, _, ppqpos, cctype, _, val_lsb, val_msb = mu.MIDI_GetCC(take, i)
     if cctype == 224 then
       for _, note in ipairs(extendNotes) do
         if ppqpos >= select(4,mu.MIDI_GetNote(take, note[1] )) and ppqpos <= note[2] then
           table.insert(deleteCC, i)
+        else
+          local val = val_msb*128 + val_lsb
+          local val = 8192 + (val-8192)*(12/bend_depth)
+          val_lsb = val & 0x7F
+          val_msb = (val >> 7) & 0x7F
+          mu.MIDI_SetCC(take, i, NULL, NULL, NULL, NULL, NULL, val_lsb, val_msb)
         end
       end
     end
@@ -443,7 +549,7 @@ end
 
 
 local function main()
-  local track = AddTrackWithCopiedFX("BonerViewer")
+  local track = AddTrackWithBonerFX("BonerViewer")
   CopyUnmutedMIDIItemsToTrack(track)
   local takes = get_track_takes(track)
 
