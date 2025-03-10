@@ -3,12 +3,9 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.4.0
+@version 1.4.1
 @changelog
-    Changed lower bound of volume slider
-    Audio preview is now based on TC samples, not your existing fx
-    Made existing pitch bends be scaled with the bend range in audio preview
-    Ensured all existing pitch bends stay
+    Removed track name from being considered lyrics
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua

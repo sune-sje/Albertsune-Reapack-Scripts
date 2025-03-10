@@ -106,15 +106,12 @@ local function process_midi_text(take)
             end
 
 
-            if type == 89 then
+            if not msg or type == 89 or type == 3 then
                 midiIdx = midiIdx + 1
                 goto continue
             end
+            reaper.ShowConsoleMsg(type)
 
-            if not msg then
-                midiIdx = midiIdx + 1
-                goto continue
-            end
             if reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos) < item_start then
                 midiIdx = midiIdx + 1
                 skipped = skipped + 1
