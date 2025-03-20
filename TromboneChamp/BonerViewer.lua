@@ -3,7 +3,7 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.4.2
+@version 1.4.3
 @changelog
     Fixed slides in continous pitch bends not being registered
 @provides
