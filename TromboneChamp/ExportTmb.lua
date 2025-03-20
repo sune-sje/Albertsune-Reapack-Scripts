@@ -106,11 +106,11 @@ local function process_midi_text(take)
             end
 
 
-            if not msg or type == 89 or type == 3 then
+            if not msg or type == 89 or type == 3 or type == 33 then
                 midiIdx = midiIdx + 1
                 goto continue
             end
-            reaper.ShowConsoleMsg(type)
+            --reaper.ShowConsoleMsg(type .. "\n")
 
             if reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos) < item_start then
                 midiIdx = midiIdx + 1
@@ -209,6 +209,8 @@ local function process_midi_notes(take)
             end
 
 
+            local pre_loop_start_pos = start_ppqpos
+            local pre_loop_end_pos = end_ppqpos
 
             --update pos to account for loop
             start_ppqpos = currentPos
@@ -220,8 +222,8 @@ local function process_midi_notes(take)
             local end_pos = reaper.MIDI_GetProjTimeFromPPQPos(take, end_ppqpos)
 
             --update pitch to include pitch shifts and convert all to tmb format
-            local start_pitch_shift = get_pitch_shift(take, chan, start_pos)
-            local end_pitch_shift = get_pitch_shift(take, chan, end_pos)
+            local start_pitch_shift = get_pitch_shift(take, chan, reaper.MIDI_GetProjTimeFromPPQPos(take, pre_loop_start_pos))
+            local end_pitch_shift = get_pitch_shift(take, chan, reaper.MIDI_GetProjTimeFromPPQPos(take, pre_loop_end_pos))
             local start_pitch = convert_pitch((pitch + (start_pitch_shift - 8192) / (8192 / bend_range)))
             local end_pitch = convert_pitch((pitch + (end_pitch_shift - 8192) / (8192 / bend_range)))
             start_pos = start_pos * (bpm / 60)
@@ -239,25 +241,28 @@ local function process_midi_notes(take)
                     x_end = end_pos,
                     y_start = start_pitch,
                     delta_pitch = end_pitch - start_pitch,
-                    y_end = end_pitch
+                    y_end = end_pitch,
+                    pitch = pitch
                 }
                 tmbIdx = tmbIdx + 1
             else
                 --if previous note overlaps and isn't same pitch, set end pos/pitch of prev note to create slide
-                if notes[tmbIdx - 1].x_end >= start_pos and notes[tmbIdx - 1].y_end ~= start_pitch then
+                if notes[tmbIdx - 1].x_end >= start_pos and notes[tmbIdx - 1].pitch ~= pitch then
                     notes[tmbIdx - 1].delta_pitch = end_pitch - notes[tmbIdx - 1].y_start
                     notes[tmbIdx - 1].y_end = start_pitch
+                    notes[tmbIdx - 1].pitch = pitch
                     notes[tmbIdx - 1].length = end_pos - notes[tmbIdx - 1].x_start
                     notes[tmbIdx - 1].x_end = end_pos
-                    --default, add note to tmb
                 else
+                    --default, add note to tmb
                     notes[tmbIdx] = {
                         x_start = start_pos,
                         length = end_pos - start_pos,
                         x_end = end_pos,
                         y_start = start_pitch,
                         delta_pitch = end_pitch - start_pitch,
-                        y_end = end_pitch
+                        y_end = end_pitch,
+                        pitch = pitch
                     }
                     tmbIdx = tmbIdx + 1
                 end

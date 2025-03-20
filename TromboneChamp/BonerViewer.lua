@@ -3,9 +3,9 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.4.1
+@version 1.4.2
 @changelog
-    Removed track name from being considered lyrics
+    Fixed slides in continous pitch bends not being registered
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua
@@ -33,20 +33,12 @@ local function check_exit_flag()
         reaper.SetExtState("BonerViewer", "exitState", "false", false) -- Clear the flag
         if reaper.GetExtState("BonerViewer", "doReload") == "true" then
             reaper.SetExtState("BonerViewer", "doReload", "false", false)
-            local audioId = reaper.AddRemoveReaScript(true, 0,
-                reaper.GetResourcePath() ..
-                '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/SlideAudio.lua', false)
-            local previewId = reaper.AddRemoveReaScript(true, 0,
-                reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/Preview.lua',
-                false)
+            local audioId = reaper.AddRemoveReaScript(true, 0, reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/SlideAudio.lua', false)
+            local previewId = reaper.AddRemoveReaScript(true, 0, reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/Preview.lua', false)
             reaper.Main_OnCommand(audioId, 0)
             reaper.Main_OnCommand(previewId, 0)
-            reaper.AddRemoveReaScript(false, 0,
-                reaper.GetResourcePath() ..
-                '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/SlideAudio.lua', false)
-            reaper.AddRemoveReaScript(false, 0,
-                reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/Preview.lua',
-                false)
+            reaper.AddRemoveReaScript(false, 0, reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/SlideAudio.lua', false)
+            reaper.AddRemoveReaScript(false, 0, reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/BonerViewer/Preview.lua', false)
             reaper.defer(check_exit_flag)
         end
         return

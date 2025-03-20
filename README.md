@@ -57,7 +57,7 @@ In this window, you can also configure **TMB settings** and export the TMB file.
 
 ## 💬 Feedback
 
-Got suggestions? Contributions? Pull requests? Or just want to tell me I’ve made your life easier (or worse)? All are welcome.
+Please do shoot a message if you find any bugs (rip dms), the more detailed explanation the better.
 
 Happy charting! 🎺🎶
 

@@ -82,6 +82,7 @@ local function add_rs5k_instance(note, sample_file, transpose, track)
     reaper.TrackFX_SetParam(track, fx_idx, 5, transpose) -- Pitch start
     reaper.TrackFX_SetParam(track, fx_idx, 9, 0) -- attack
     reaper.TrackFX_SetParam(track, fx_idx, 11, 1) -- Obey Note offs
+    reaper.TrackFX_SetParam(track, fx_idx, 12, 1) -- Loop
     reaper.TrackFX_SetParam(track, fx_idx, 16, 0) -- pitch bend range
     
     local sample_path = sample_folder .. sample_file
@@ -519,6 +520,7 @@ local function process_midi_notes(take)
           table.insert(deleteCC, i)
         else
           local val = val_msb*128 + val_lsb
+          val = math.min(val, 8192)
           local val = 8192 + (val-8192)*(12/bend_depth)
           val_lsb = val & 0x7F
           val_msb = (val >> 7) & 0x7F
@@ -549,16 +551,18 @@ end
 
 
 local function main()
+  reaper.Undo_BeginBlock()
   local track = AddTrackWithBonerFX("BonerViewer")
   CopyUnmutedMIDIItemsToTrack(track)
   local takes = get_track_takes(track)
 
   for _, take in ipairs(takes) do
-    reaper.Undo_BeginBlock()
+    
     process_midi_notes(take)
     reaper.MIDI_Sort(take)
-    reaper.Undo_EndBlock("Add pitch bend for overlapping notes", -1)
+    
   end
+  reaper.Undo_EndBlock("Added Bonerviewer track", -1)
 end
 
 

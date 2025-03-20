@@ -36,7 +36,7 @@ local settings = {
     importpath = " "
 }
 
-local bend_ranges = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }
+local bend_ranges = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24 }
 local ctx = imgui.CreateContext("Edit TMB Values")
 local open = true
 local visible = true
