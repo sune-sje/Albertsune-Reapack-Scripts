@@ -264,6 +264,7 @@ local function process_midi_notes(take)
                         y_end = end_pitch,
                         pitch = pitch
                     }
+                    notes[tmbIdx - 1].x_end = math.min(notes[tmbIdx - 1].x_end, start_pos)
                     tmbIdx = tmbIdx + 1
                 end
             end
