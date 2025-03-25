@@ -110,7 +110,7 @@ local function process_midi_text(take)
                 midiIdx = midiIdx + 1
                 goto continue
             end
-            --reaper.ShowConsoleMsg(type .. "\n")
+            reaper.ShowConsoleMsg(type .. "\n")
 
             if reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos) < item_start then
                 midiIdx = midiIdx + 1
@@ -265,6 +265,7 @@ local function process_midi_notes(take)
                         pitch = pitch
                     }
                     notes[tmbIdx - 1].x_end = math.min(notes[tmbIdx - 1].x_end, start_pos)
+                    notes[tmbIdx - 1].length = start_pos - notes[tmbIdx - 1].x_start
                     tmbIdx = tmbIdx + 1
                 end
             end
@@ -415,7 +416,8 @@ local function saveTmb(notes, lyrics, improv_zones)
     local noteList = {}
     for i = 1, #notes do
         data.endpoint = math.max(data.endpoint, math.ceil(notes[i].x_start + notes[i].length) + 4)
-        noteList[i] = { notes[i].x_start, notes[i].length, notes[i].y_start, notes[i].delta_pitch, notes[i].y_end }
+        --todo: fix length being set inaccurately
+        noteList[i] = { notes[i].x_start, notes[i].x_end-notes[i].x_start, notes[i].y_start, notes[i].delta_pitch, notes[i].y_end }
     end
     data.notes = noteList
     data.lyrics = lyrics
