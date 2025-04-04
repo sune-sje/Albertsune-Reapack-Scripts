@@ -3,7 +3,7 @@
 
 package.path = reaper.ImGui_GetBuiltinPath() .. '/?.lua'
 local imgui = require 'imgui' '0.9.3'
-local tmb = dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/exportTmb.lua')
+local tmb = dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scripts/TromboneChamp/ExportTmb.lua')
 
 
 
@@ -23,7 +23,7 @@ local function getNotes()
     for i, dict in pairs(LinesTest) do
         dict.x_start = dict.x_start * 50
         dict.x_end = dict.x_end * 50
-        dict.length = dict.x_end - dict.x_start
+        dict.length = dict.length * 50
         dict.y_start = 1 - (dict.y_start + 200) / 400
         dict.delta_pitch = 1 - (dict.delta_pitch + 200) / 400
         dict.y_end = 1 - (dict.y_end + 200) / 400

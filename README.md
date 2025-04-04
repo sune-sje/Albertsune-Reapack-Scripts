@@ -10,7 +10,7 @@ These scripts are distributed via **ReaPack**, REAPER’s package manager. If yo
 
 Once that’s set up, add my repository by importing this link into ReaPack:
 
-```
+```plaintext
 https://raw.githubusercontent.com/sune-sje/Albertsune-Reapack-Scripts/master/index.xml
 ```
 
@@ -32,6 +32,7 @@ Automatically spaces all notes in selected MIDI takes. It might not be perfect, 
 ✅ Doesn't touch your slides  
 
 #### **Usage:**  
+
 Select the MIDI takes you want to adjust, then run the script. It will analyze the note positions and update their lengths to hopefully achieve better spacing.  
 
 ### **BonerViewer**
@@ -47,9 +48,11 @@ Tired of manually exporting MIDI, converting to TMB, and only then previewing yo
 ✅ Export TMB directly from reaper, directly to where you'd like it
 
 #### **Usage:**  
+
 BonerViewer will open a window that previews all unmuted MIDI takes as they would appear in-game. This mimics the usual process of exporting the project MIDI, converting, and playing.  
 
-In this window, you can also configure **TMB settings** and export the TMB file. If you prefer to skip the preview, these functions are also available separately in the action menu as:  
+In this window, you can also configure **TMB settings** and export the TMB file. If you prefer to skip the preview, these functions are also available separately in the action menu as:
+
 - `tmbSettings.lua` (for setting TMB metadata)  
 - `ExportTmb.lua` (for exporting the TMB file)  
 

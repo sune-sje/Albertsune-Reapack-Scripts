@@ -3,9 +3,15 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.4.5
+@version 1.5
 @changelog
-    Hotfixed note lengths in exported tmbs all being full length to next note. Proper fix to come later 
+    added custom error message for missing dependencies
+    fixed a use of built in midi api not midiutils
+    added bgEvent support
+    fixed length hotfix for exported tmbs
+    now checks if there's missing fields in the tmb
+    now works for case sensitive file systems
+    no longer clamps pitch
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua
@@ -17,6 +23,20 @@
     BonerViewer/Samples/*.wav
 
 --]]
+
+
+-- Check for js_ReaScriptAPI
+if not reaper.APIExists("JS_ReaScriptAPI_Version") then
+    reaper.ShowMessageBox("Error: js_ReaScriptAPI is not installed.\n\nPlease install it via ReaPack.", "Missing Dependency", 0)
+    return
+end
+
+-- Check for reaImGui
+if not pcall(reaper.ImGui_GetBuiltinPath) then
+    reaper.ShowMessageBox("Error: ReaImGui is not installed.\n\nPlease install it via ReaPack.", "Missing Dependency", 0)
+    return
+end
+
 
 
 reaper.SetExtState("BonerViewer", "exitState", "false", false)

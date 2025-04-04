@@ -26,7 +26,7 @@ end
 
 --converts pitch from midi to tmb format, clamps out of bound notes
 local function convert_pitch(pitch)
-    pitch = math.min(math.max(pitch, 47), 73)
+    --pitch = math.min(math.max(pitch, 47), 73)
     return (pitch - 60) * 13.75
 end
 
@@ -44,7 +44,7 @@ end
 
 --merges all pitch shifts into channel 0
 local function merge_pitch_shifts(take)
-    local _, _, evtCount = reaper.MIDI_CountEvts(take)
+    local _, _, evtCount = mu.MIDI_CountEvts(take)
     for i = 0, evtCount - 1 do
         local _, _, _, _, msg = mu.MIDI_GetCC(take, i)
         if msg == "0xE0" then
@@ -76,10 +76,13 @@ local function process_midi_text(take)
     local bpm = reaper.TimeMap2_GetDividedBpmAtTime(0, 0) * (4 / select(2, reaper.TimeMap_GetTimeSigAtTime(0, 0)))
     local lyrics = {}
     local improv_zones = {}
-    local loopNum = 0
-    local currentPos = 0
+    local bgEvents = {}
     local lyricIdx = 1
     local improvIdx = 1
+    local bgEventIdx = 1
+    local loopNum = 0
+    local currentPos = 0
+
 
     --first loop only if the take loops; will add up loop offset every iteration which will later be added to the notes ppq position
     while true do
@@ -133,6 +136,15 @@ local function process_midi_text(take)
             elseif msg:find("improv_end") then
                 improv_zones[improvIdx][2] = pos
                 improvIdx = improvIdx + 1
+            elseif msg:lower():find("bgevent") then 
+                local bgEvent = tonumber(msg:match("[0-9]+"))
+                if bgEvent then
+                    bgEvents[bgEventIdx] = {reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos), 
+                                            bgEvent, 
+                                            pos
+                                            }
+                    bgEventIdx = bgEventIdx + 1
+                end
             else
                 lyrics[lyricIdx] = { bar = pos, text = msg }
                 lyricIdx = lyricIdx + 1
@@ -142,7 +154,7 @@ local function process_midi_text(take)
         end
         loopNum = loopNum + 1
     end
-    return lyrics, improv_zones
+    return lyrics, improv_zones, bgEvents
 end
 
 
@@ -265,7 +277,7 @@ local function process_midi_notes(take)
                         pitch = pitch
                     }
                     notes[tmbIdx - 1].x_end = math.min(notes[tmbIdx - 1].x_end, start_pos)
-                    notes[tmbIdx - 1].length = start_pos - notes[tmbIdx - 1].x_start
+                    notes[tmbIdx - 1].length = notes[tmbIdx - 1].x_end - notes[tmbIdx - 1].x_start
                     tmbIdx = tmbIdx + 1
                 end
             end
@@ -310,9 +322,10 @@ local function get_text()
     local takeList = get_unmuted_takes()
     local lyrics = {}
     local improv_zones = {}
+    local bgEvents = {}
 
     for i = 1, #takeList do
-        local take_lyrics, take_improv_zones = process_midi_text(takeList[i])
+        local take_lyrics, take_improv_zones, take_bg_events = process_midi_text(takeList[i])
         if not take_lyrics then goto skip end
         for j = 1, #take_lyrics do
             table.insert(lyrics, take_lyrics[j])
@@ -323,6 +336,11 @@ local function get_text()
             table.insert(improv_zones, take_improv_zones[j])
         end
         ::skip2::
+        if not take_bg_events then goto skip3 end
+        for j = 1, #take_bg_events do
+            table.insert(bgEvents, take_bg_events[j])
+        end
+        ::skip3::
     end
 
     table.sort(lyrics, function(a, b)
@@ -332,9 +350,12 @@ local function get_text()
     table.sort(improv_zones, function(a, b)
         return a[1] < b[1]
     end)
+    table.sort(bgEvents, function(a, b)
+        return a[1] < b[1]
+    end)
 
 
-    return lyrics, improv_zones
+    return lyrics, improv_zones, bgEvents
 end
 
 --combines notes of all takes in a single sorted list
@@ -406,7 +427,23 @@ local function get_tmb_inputs()
 end
 
 
-local function saveTmb(notes, lyrics, improv_zones)
+
+local function check_settings(tmb)
+    --check if all required settings are present
+    local required_keys = { "name", "shortName", "author", "genre", "description", "trackRef" }
+    local missing_keys = {}
+    for _, key in ipairs(required_keys) do
+        if tmb[key] == "" then
+            table.insert(missing_keys, key)
+        end
+    end
+    if #missing_keys > 0 then
+        local missing_keys_str = table.concat(missing_keys, ", ")
+        reaper.ShowMessageBox("Missing required settings: " .. missing_keys_str, "Error", 0)
+    end
+end
+
+local function saveTmb(notes, lyrics, improv_zones, bg_events)
     --get data to save
     local data = get_tmb_inputs()
     if not data.tempo then
@@ -416,12 +453,15 @@ local function saveTmb(notes, lyrics, improv_zones)
     local noteList = {}
     for i = 1, #notes do
         data.endpoint = math.max(data.endpoint, math.ceil(notes[i].x_start + notes[i].length) + 4)
-        --todo: fix length being set inaccurately
-        noteList[i] = { notes[i].x_start, notes[i].x_end-notes[i].x_start, notes[i].y_start, notes[i].delta_pitch, notes[i].y_end }
+        noteList[i] = { notes[i].x_start, notes[i].length, notes[i].y_start, notes[i].delta_pitch, notes[i].y_end }
     end
     data.notes = noteList
     data.lyrics = lyrics
     data.improv_zones = improv_zones
+    data.bgdata = bg_events
+
+    --check if all required settings are present
+    check_settings(data)
 
 
     --remove unneeded data and export as json
@@ -445,8 +485,8 @@ end
 local function main()
     local notes = get_notes()
     --local lyrics, improv_zones = get_lyrics()
-    local lyrics, improv_zones = get_text()
-    saveTmb(notes, lyrics, improv_zones)
+    local lyrics, improv_zones, bg_events = get_text()
+    saveTmb(notes, lyrics, improv_zones, bg_events)
 end
 
 
