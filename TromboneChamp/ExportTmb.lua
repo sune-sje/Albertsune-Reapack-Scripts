@@ -129,6 +129,16 @@ local function process_midi_text(take)
             local pos = reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos)
             pos = pos * (bpm / 60)
 
+            if type == 6 then
+                --type marker, assume bgevent
+                local bgEvent = tonumber(msg:match("[0-9]+"))
+                if bgEvent then
+                    bgEvents[bgEventIdx] = {reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos), bgEvent, pos}
+                    bgEventIdx = bgEventIdx + 1
+                    midiIdx = midiIdx + 1
+                    goto continue
+                end
+            end
 
             if msg:find("improv_start") then
                 improv_zones[improvIdx] = {}
@@ -139,10 +149,7 @@ local function process_midi_text(take)
             elseif msg:lower():find("bgevent") then 
                 local bgEvent = tonumber(msg:match("[0-9]+"))
                 if bgEvent then
-                    bgEvents[bgEventIdx] = {reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos), 
-                                            bgEvent, 
-                                            pos
-                                            }
+                    bgEvents[bgEventIdx] = {reaper.MIDI_GetProjTimeFromPPQPos(take, ppqpos), bgEvent, pos}
                     bgEventIdx = bgEventIdx + 1
                 end
             else
@@ -326,21 +333,21 @@ local function get_text()
 
     for i = 1, #takeList do
         local take_lyrics, take_improv_zones, take_bg_events = process_midi_text(takeList[i])
-        if not take_lyrics then goto skip end
-        for j = 1, #take_lyrics do
-            table.insert(lyrics, take_lyrics[j])
+        if take_lyrics then
+            for j = 1, #take_lyrics do
+                table.insert(lyrics, take_lyrics[j])
+            end
         end
-        ::skip::
-        if not take_improv_zones then goto skip2 end
-        for j = 1, #take_improv_zones do
-            table.insert(improv_zones, take_improv_zones[j])
+        if take_improv_zones then
+            for j = 1, #take_improv_zones do
+                table.insert(improv_zones, take_improv_zones[j])
+            end
         end
-        ::skip2::
-        if not take_bg_events then goto skip3 end
-        for j = 1, #take_bg_events do
-            table.insert(bgEvents, take_bg_events[j])
+        if take_bg_events then
+            for j = 1, #take_bg_events do
+                table.insert(bgEvents, take_bg_events[j])
+            end
         end
-        ::skip3::
     end
 
     table.sort(lyrics, function(a, b)
@@ -470,7 +477,7 @@ local function saveTmb(notes, lyrics, improv_zones, bg_events)
     data.bendrange = nil
     local file = io.open(exportpath, "w")
     local json_string = json.encode(data,
-        { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "improv_zones", "lyrics", "notes" } })
+        { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "improv_zones", "lyrics", "bgdata", "notes" } })
     if file then
         file:write(json_string)
         file:close()

@@ -10,7 +10,7 @@ local tmb = dofile(reaper.GetResourcePath() .. '/Scripts/Albertsune Reapack Scri
 local boner_track = reaper.CountTracks(0) - 1
 local mute_tracks = {}
 for str in string.gmatch(reaper.GetExtState("BonerViewer", "activeTracks"), "([^,]+)") do
-    table.insert(mute_tracks, tonumber(str))
+    table.insert(mute_tracks, reaper.GetTrack(0, tonumber(str)))
 end
 local check_state = false
 
@@ -91,8 +91,7 @@ end
 
 -- Mute or unmute tracks based on check_state
 local function muteUnmute_tracks()
-    for _, track_idx in ipairs(mute_tracks) do
-        local track = reaper.GetTrack(0, track_idx)  -- Convert to 0-based index
+    for _, track in ipairs(mute_tracks) do
         if track then
             reaper.SetMediaTrackInfo_Value(track, "B_MUTE", check_state and 1 or 0)
         end
