@@ -23,6 +23,7 @@ local settings = {
     name = "",
     shortName = "",
     author = "",
+    charter = "",
     year = 2000,
     genre = "",
     description = "",
@@ -88,7 +89,7 @@ end
 -- GUI function
 local function loop()
     -- Open window
-    imgui.SetNextWindowSize(ctx, 452, 678, imgui.Cond_FirstUseEver)
+    imgui.SetNextWindowSize(ctx, 452, 698, imgui.Cond_FirstUseEver)
     imgui.SetNextWindowPos(ctx, 50, 50, imgui.Cond_FirstUseEver)
     visible, open = imgui.Begin(ctx, "Edit TMB Values", true,
         imgui.WindowFlags_NoCollapse + imgui.WindowFlags_NoResize + imgui.WindowFlags_NoSavedSettings) -- + imgui.WindowFlags_NoResize)
@@ -119,6 +120,8 @@ local function loop()
     _, settings.shortName = imgui.InputText(ctx, "Short Name", settings.shortName)
 
     _, settings.author = imgui.InputText(ctx, "Artist", settings.author)
+    
+    _, settings.charter = imgui.InputText(ctx, "Charter", settings.charter)
 
     _, settings.year = imgui.InputText(ctx, "Release Year", settings.year, imgui.InputTextFlags_CharsDecimal)
 

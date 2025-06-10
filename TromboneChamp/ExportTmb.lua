@@ -397,6 +397,7 @@ local function get_tmb_inputs()
         name = "",
         shortName = "",
         author = "",
+        charter = "",
         year = 2000,
         genre = "",
         description = "",
@@ -437,7 +438,7 @@ end
 
 local function check_settings(tmb)
     --check if all required settings are present
-    local required_keys = { "name", "shortName", "author", "genre", "description", "trackRef" }
+    local required_keys = { "name", "shortName", "author", "charter", "genre", "description", "trackRef" }
     local missing_keys = {}
     for _, key in ipairs(required_keys) do
         if tmb[key] == "" then
@@ -477,7 +478,7 @@ local function saveTmb(notes, lyrics, improv_zones, bg_events)
     data.bendrange = nil
     local file = io.open(exportpath, "w")
     local json_string = json.encode(data,
-        { indent = true, keyorder = { "name", "shortName", "author", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "improv_zones", "lyrics", "bgdata", "notes" } })
+        { indent = true, keyorder = { "name", "shortName", "author", "charter", "year", "genre", "description", "tempo", "timesig", "difficulty", "savednotespacing", "endpoint", "trackRef", "note_color_start", "note_color_end", "improv_zones", "lyrics", "bgdata", "notes" } })
     if file then
         file:write(json_string)
         file:close()
