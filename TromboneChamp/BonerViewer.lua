@@ -3,10 +3,9 @@
 @about
     Allows you to preview, edit, and export Trombone Champ charts directly from reaper.
 @author Albertsune
-@version 1.5.1
+@version 1.5.2
 @changelog
-    textevent of type marker is now assumed to be bgevents
-    now properly keeps track of tracks to mute
+    Added charter field
 @provides
     [main] BonerViewer.lua
     [main=main] ExportTmb.lua
