@@ -43,7 +43,7 @@
     [main=main] ExportTmb.lua
     [main=main] tmbSettings.lua
     BonerViewer/SlideAudio.lua
-    BonerViewer/TcUtils.lua  --TODO INSERT LINK HERE
+    BonerViewer/TcUtils.lua
     BonerViewer/MIDIUtils.lua https://raw.githubusercontent.com/jeremybernstein/ReaScripts/main/MIDI/MIDIUtils.lua
     BonerViewer/dkjson.lua https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua
     BonerViewer/Samples/*.wav
